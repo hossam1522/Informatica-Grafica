@@ -40,6 +40,7 @@ using namespace std;
 
 int modo = GL_FILL;    // Modo de visualizacion inicial (GL_POINT, GL_LINE, GL_FILL)
 bool iluminacion = false;   // Visualizacion inicial con iluminacion
+bool sombreado = false;   // Visualizacion inicial con sombreado plano (false) y suave (true)
 
 /**	void initModel()
 
@@ -244,13 +245,18 @@ MallaVirtual::MallaVirtual(const char * nombre_archivo)
 
 void MallaVirtual::draw(){
 
-  for (int i=0; i<triangulos.size(); i+=3){
+  /* for (int i=0; i<triangulos.size(); i+=3){
     glBegin(GL_TRIANGLES);
       glVertex3f(vertices[3*triangulos[i]], vertices[3*triangulos[i]+1], vertices[3*triangulos[i]+2]);
       glVertex3f(vertices[3*triangulos[i+1]], vertices[3*triangulos[i+1]+1], vertices[3*triangulos[i+1]+2]);
       glVertex3f(vertices[3*triangulos[i+2]], vertices[3*triangulos[i+2]+1], vertices[3*triangulos[i+2]+2]);
     glEnd();
-  }
+  } */
+
+  if (!sombreado)
+    draw_flat();
+  else
+    draw_smooth();
 
 }
 
@@ -328,14 +334,7 @@ vector<float> MallaVirtual::calculoNormalCara(vector<float> v1, vector<float> v2
   normal.push_back(a3*b1 - a1*b3);
   normal.push_back(a1*b2 - a2*b1);
 
-  float modulo = sqrt(normal[0]*normal[0] + normal[1]*normal[1] + normal[2]*normal[2]);
-
-  if (modulo > 0){
-    normal[0] = normal[0]/modulo;
-    normal[1] = normal[1]/modulo;
-    normal[2] = normal[2]/modulo;
-  }
-
+  //return normalizaVector(normal);
   return normal;
 
 }
@@ -431,17 +430,19 @@ SuperficieRevolucion::SuperficieRevolucion(vector<float> vertices_ply, int num_i
       vertices.push_back(-vertices_ply[j]*sin(alpha) + vertices_ply[j+2]*cos(alpha) );
     }
 
+  int n = vertices_ply.size()*(num_instancias-1);
+
   for (int i=0; i<num_instancias-1; i++)
     for (int j=0; j<vertices_ply.size()-3; j+=3){
       int k = i*vertices_ply.size()/3 + j/3;
 
-      triangulos.push_back(k);
-      triangulos.push_back(k+vertices_ply.size()/3);
-      triangulos.push_back(k+vertices_ply.size()/3+1);
+      triangulos.push_back(k % n);
+      triangulos.push_back((k+vertices_ply.size()/3) % n);
+      triangulos.push_back((k+vertices_ply.size()/3+1) % n);
 
-      triangulos.push_back(k);
-      triangulos.push_back(k+vertices_ply.size()/3+1);
-      triangulos.push_back(k+1);
+      triangulos.push_back(k % n);
+      triangulos.push_back((k+vertices_ply.size()/3+1) % n);
+      triangulos.push_back((k+1) % n);
     }
 
   normales_vertices = calculoNormalVertices();
@@ -479,23 +480,25 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
       vertices.push_back(-vertices_ply[j]*sin(alpha) + vertices_ply[j+2]*cos(alpha) );
     }
 
+  int n = vertices_ply.size()/3*(num_instancias-1);
+
   for (int i=0; i<num_instancias-1; i++)
     for (int j=0; j<vertices_ply.size()-3; j+=3){
       int k = i*vertices_ply.size()/3 + j/3;
 
-      triangulos.push_back(k);
-      triangulos.push_back(k+vertices_ply.size()/3);
-      triangulos.push_back(k+vertices_ply.size()/3+1);
+      triangulos.push_back(k % n);
+      triangulos.push_back((k+vertices_ply.size()/3) % n);
+      triangulos.push_back((k+vertices_ply.size()/3+1) % n);
 
-      triangulos.push_back(k);
-      triangulos.push_back(k+vertices_ply.size()/3+1);
-      triangulos.push_back(k+1);
+      triangulos.push_back(k % n);
+      triangulos.push_back((k+vertices_ply.size()/3+1) % n);
+      triangulos.push_back((k+1) % n);
     }
 
   normales_vertices = calculoNormalVertices();
 }
 
-SuperficieRevolucion superficie("plys/perfil.ply", 10);
+SuperficieRevolucion superficie("plys/perfil.ply", 9);
 
 /**************************************************************************************/
 
@@ -507,7 +510,7 @@ Procedimiento de dibujo del modelo. Es llamado por glut cada vez que se debe red
 
 void Dibuja (void)
 {
-  static GLfloat  pos[4] = { 5.0, -5.0, 10.0, 0.0 };	// Posicion de la fuente de luz
+  static GLfloat  pos[4] = { 5.0, 5.0, 10.0, 0.0 };	// Posicion de la fuente de luz
   //static GLfloat  pos[4] = { -13.0, -6.0, 0.0, 0.0 };	// Posicion de la fuente de luz
 
 
@@ -537,24 +540,38 @@ void Dibuja (void)
   else
     glEnable(GL_LIGHTING);
 
+  if (!sombreado)
+    glShadeModel(GL_FLAT);
+  else
+    glShadeModel(GL_SMOOTH);
+
   // Dibuja el modelo (A rellenar en prácticas 1,2 y 3)
 
   glColor3f(0, 1, 0);
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color2);
   glTranslatef(-7, 0, 0);
-  glShadeModel(GL_SMOOTH);
-  malla1.draw_smooth();
+  //glShadeModel(GL_SMOOTH);
+  //malla1.draw_smooth();
+  malla1.draw();
 
   glColor3f(0.8, 0.0, 1);
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
   glTranslatef(7, 0, 0);
-  superficie.draw_smooth();
+  //superficie.draw_smooth();
+  superficie.draw();
+
+  /* glColor3f(0.8, 0.0, 1);
+  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
+  glTranslatef(7, 0, 0);
+  glShadeModel(GL_FLAT);
+  superficie.draw_flat(); */
 
   glColor3f(0.8, 0.0, 0);
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color3);
   glTranslatef(10, 0, 0);
-  glShadeModel(GL_FLAT);
-  malla2.draw_flat();
+  //glShadeModel(GL_FLAT);
+  //malla2.draw_flat();
+  malla2.draw();
 
 
   glPopMatrix ();		// Desapila la transformacion geometrica
@@ -585,4 +602,9 @@ void setModo (int M)
 void setIluminacion ()
 {
   iluminacion = !iluminacion;
+}
+
+void setSombreado ()
+{
+  sombreado = !sombreado;
 }

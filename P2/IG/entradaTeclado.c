@@ -110,6 +110,9 @@ void letra (unsigned char k, int x, int y)
     case 'i':
       setIluminacion ();	// I y i cambian a modo iluminacion
       break;
+    case 's':
+      setSombreado ();		// S y s cambian a modo sombreado
+      break;
     case 27:			// Escape  Terminar
       exit (0);
     default:

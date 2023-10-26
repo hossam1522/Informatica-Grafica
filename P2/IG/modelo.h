@@ -29,8 +29,6 @@
 
 #include <vector>
 
-using namespace std;
-
 /**
 	Funcion de redibujado. Se ejecuta con los eventos postRedisplay
 **/
@@ -55,6 +53,11 @@ void setModo (int M);
 	Funcion de cambio de iluminacion
 **/
 void setIluminacion ();
+
+/**
+  Funcion de cambio del modo de sombreado
+**/
+void setSombreado ();
 
 
 
@@ -123,15 +126,15 @@ class Octaedro:public Objeto3D
 class MallaVirtual:public Objeto3D
 {
   protected:
-    vector <float> vertices;
-    vector <int> triangulos;
-    vector <float> normales_vertices;
+    std::vector <float> vertices;
+    std::vector <int> triangulos;
+    std::vector <float> normales_vertices;
 
   public:
 
   MallaVirtual(){};
 
-  MallaVirtual(vector <float> vertices, vector <int> triangulos);
+  MallaVirtual(std::vector <float> vertices, std::vector <int> triangulos);
 
   MallaVirtual(const char * nombre_archivo);
 
@@ -141,25 +144,25 @@ class MallaVirtual:public Objeto3D
 
   void draw_flat();
 
-  vector<float> calculoNormalVertices();
+  std::vector<float> calculoNormalVertices();
 
-  vector<float> calculoNormalCara(vector<float> v1, vector<float> v2, vector<float> v3);
+  std::vector<float> calculoNormalCara(std::vector<float> v1, std::vector<float> v2, std::vector<float> v3);
 
-  vector<float> normalizaVector(vector<float> v);
+  std::vector<float> normalizaVector(std::vector<float> v);
 
 };
 
 class SuperficieRevolucion:public MallaVirtual
 {
   protected:
-    vector <float> vertices_ply;
+    std::vector <float> vertices_ply;
     int num_instancias;
 
   public:
 
   SuperficieRevolucion(){};
 
-  SuperficieRevolucion(vector <float> vertices_ply, int num_instancias);
+  SuperficieRevolucion(std::vector <float> vertices_ply, int num_instancias);
 
   SuperficieRevolucion(const char * nombre_archivo, int num_instancias);
   
