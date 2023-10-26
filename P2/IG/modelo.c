@@ -1,13 +1,13 @@
 /*	Prácticas de Informática Gráfica
 
 	Grupo C					Curso 2022-23
- 	
+
 	Codigo base para la realización de las practicas de IG
-	
+
 	Estudiante: Hossam El Amraoui Leghzali
 
 =======================================================
-	G. Arroyo, J.C. Torres 
+	G. Arroyo, J.C. Torres
 	Dpto. Lenguajes y Sistemas Informticos
 	(Univ. de Granada)
 
@@ -19,7 +19,7 @@
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details 
+ GNU General Public License for more details
  http://www.gnu.org/copyleft/gpl.html
 
 =======================================================/
@@ -113,19 +113,19 @@ void Cubo::draw()
     glNormal3f(0.0f, -1.0f, 0.0f);
     glVertex3f(lado, 0, 0);
     glVertex3f(0, 0, 0);
-    
+
     // back
     glNormal3f(0.0f, 0.0f, -1.0f);
     glVertex3f(lado, lado, 0);
     glVertex3f(0, lado, 0);
-    
+
     // top
     glNormal3f(0.0f, 1.0f, 0.0f);
     glVertex3f(lado, lado, lado);
     glVertex3f(0, lado, lado);
 
   glEnd();
-  
+
 }
 
 Cubo cubo(2);
@@ -143,7 +143,7 @@ void Piramide::draw(){
     glVertex3f(lado, 0, 0);
     glVertex3f(lado, 0, lado);
     glVertex3f(0, 0, lado);
-  
+
   glEnd();
 
   glBegin(GL_TRIANGLE_FAN);
@@ -231,14 +231,14 @@ MallaVirtual::MallaVirtual(vector <float> vertices, vector <int> triangulos)
 {
   this->vertices = vertices;
   this->triangulos = triangulos;
-  
+
   normales_vertices = calculoNormalVertices();
 }
 
 MallaVirtual::MallaVirtual(const char * nombre_archivo)
 {
   ply::read(nombre_archivo, vertices, triangulos);
-  
+
   normales_vertices = calculoNormalVertices();
 }
 
@@ -249,7 +249,7 @@ void MallaVirtual::draw(){
       glVertex3f(vertices[3*triangulos[i]], vertices[3*triangulos[i]+1], vertices[3*triangulos[i]+2]);
       glVertex3f(vertices[3*triangulos[i+1]], vertices[3*triangulos[i+1]+1], vertices[3*triangulos[i+1]+2]);
       glVertex3f(vertices[3*triangulos[i+2]], vertices[3*triangulos[i+2]+1], vertices[3*triangulos[i+2]+2]);
-    glEnd(); 
+    glEnd();
   }
 
 }
@@ -264,7 +264,7 @@ void MallaVirtual::draw_smooth(){
       glVertex3f(vertices[3*triangulos[i+1]], vertices[3*triangulos[i+1]+1], vertices[3*triangulos[i+1]+2]);
       glNormal3f(normales_vertices[3*triangulos[i+2]], normales_vertices[3*triangulos[i+2]+1], normales_vertices[3*triangulos[i+2]+2]);
       glVertex3f(vertices[3*triangulos[i+2]], vertices[3*triangulos[i+2]+1], vertices[3*triangulos[i+2]+2]);
-    glEnd(); 
+    glEnd();
   }
 
 }
@@ -295,7 +295,7 @@ void MallaVirtual::draw_flat(){
       glVertex3f(vertices[3*triangulos[i]], vertices[3*triangulos[i]+1], vertices[3*triangulos[i]+2]);
       glVertex3f(vertices[3*triangulos[i+1]], vertices[3*triangulos[i+1]+1], vertices[3*triangulos[i+1]+2]);
       glVertex3f(vertices[3*triangulos[i+2]], vertices[3*triangulos[i+2]+1], vertices[3*triangulos[i+2]+2]);
-    glEnd(); 
+    glEnd();
   }
 
 }
@@ -351,13 +351,13 @@ vector<float> MallaVirtual::normalizaVector(vector<float> v){
     }
 
   }
-   
+
   return v;
 
 }
 
 vector<float> MallaVirtual::calculoNormalVertices(){
-  
+
   vector<float> normales (vertices.size(), 0);
 
   for (int i=0; i<triangulos.size(); i+=3){
@@ -403,6 +403,22 @@ SuperficieRevolucion::SuperficieRevolucion(vector<float> vertices_ply, int num_i
   this->vertices_ply = vertices_ply;
   this->num_instancias = num_instancias;
 
+  if (vertices_ply[0] !=0 || vertices_ply[2]!=0){
+    float h = vertices_ply[1];
+
+    vertices_ply.insert(vertices_ply.begin(), 0);
+    vertices_ply.insert(vertices_ply.begin()+1, h);
+    vertices_ply.insert(vertices_ply.begin()+2, 0);
+  }
+
+  if (vertices_ply[vertices_ply.size()-3] !=0 || vertices_ply[vertices_ply.size()-1]!=0){
+    float h = vertices_ply[vertices_ply.size()-2];
+
+    vertices_ply.push_back(0);
+    vertices_ply.push_back(h);
+    vertices_ply.push_back(0);
+  }
+
   for (int i=0; i<num_instancias; i++)
     for (int j=0; j<vertices_ply.size(); j+=3){
 
@@ -435,6 +451,22 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
   ply::read_vertices(nombre_archivo, vertices_ply);
   this->num_instancias = num_instancias;
 
+  if (vertices_ply[0] !=0 || vertices_ply[2]!=0){
+    float h = vertices_ply[1];
+
+    vertices_ply.insert(vertices_ply.begin(), 0);
+    vertices_ply.insert(vertices_ply.begin()+1, h);
+    vertices_ply.insert(vertices_ply.begin()+2, 0);
+  }
+
+  if (vertices_ply[vertices_ply.size()-3] !=0 || vertices_ply[vertices_ply.size()-1]!=0){
+    float h = vertices_ply[vertices_ply.size()-2];
+
+    vertices_ply.push_back(0);
+    vertices_ply.push_back(h);
+    vertices_ply.push_back(0);
+  }
+
   for (int i=0; i<num_instancias; i++)
     for (int j=0; j<vertices_ply.size(); j+=3){
 
@@ -463,7 +495,7 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
   normales_vertices = calculoNormalVertices();
 }
 
-SuperficieRevolucion superficie("plys_rev/peon.ply", 10);
+SuperficieRevolucion superficie("plys/perfil.ply", 10);
 
 /**************************************************************************************/
 
@@ -475,7 +507,7 @@ Procedimiento de dibujo del modelo. Es llamado por glut cada vez que se debe red
 
 void Dibuja (void)
 {
-  static GLfloat  pos[4] = { 5.0, 5.0, 10.0, 0.0 };	// Posicion de la fuente de luz
+  static GLfloat  pos[4] = { 5.0, -5.0, 10.0, 0.0 };	// Posicion de la fuente de luz
   //static GLfloat  pos[4] = { -13.0, -6.0, 0.0, 0.0 };	// Posicion de la fuente de luz
 
 
@@ -505,7 +537,7 @@ void Dibuja (void)
   else
     glEnable(GL_LIGHTING);
 
-  // Dibuja el modelo (A rellenar en prácticas 1,2 y 3)   
+  // Dibuja el modelo (A rellenar en prácticas 1,2 y 3)
 
   glColor3f(0, 1, 0);
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color2);
@@ -516,12 +548,12 @@ void Dibuja (void)
   glColor3f(0.8, 0.0, 1);
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
   glTranslatef(7, 0, 0);
-  glShadeModel(GL_FLAT);
-  superficie.draw_flat();
+  superficie.draw_smooth();
 
   glColor3f(0.8, 0.0, 0);
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color3);
   glTranslatef(10, 0, 0);
+  glShadeModel(GL_FLAT);
   malla2.draw_flat();
 
 
