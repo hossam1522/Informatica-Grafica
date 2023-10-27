@@ -1,13 +1,13 @@
 /*	Prácticas de Informática Gráfica
 
 	Grupo C					Curso 2022-23
- 	
+
 	Codigo base para la realización de las practicas de IG
-	
+
 	Estudiante: Hossam El Amraoui Leghzali
 
 =======================================================
-	G. Arroyo, J.C. Torres 
+	G. Arroyo, J.C. Torres
 	Dpto. Lenguajes y Sistemas Informticos
 	(Univ. de Granada)
 
@@ -19,7 +19,7 @@
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details 
+ GNU General Public License for more details
  http://www.gnu.org/copyleft/gpl.html
 
 =======================================================
@@ -61,22 +61,22 @@ void setSombreado ();
 
 
 
-class Objeto3D 
-{ 
-public: 
+class Objeto3D
+{
+public:
 
 virtual void draw( ) = 0; // Dibuja el objeto
-} ; 
+} ;
 
-class Ejes:public Objeto3D 
+class Ejes:public Objeto3D
 {
-	public: 
+	public:
     float longitud = 30;
 	// Dibuja el objeto
 	void draw( );
 };
 
-class Cubo : public Objeto3D 
+class Cubo : public Objeto3D
 {
   protected:
 	  float lado;
@@ -165,5 +165,20 @@ class SuperficieRevolucion:public MallaVirtual
   SuperficieRevolucion(std::vector <float> vertices_ply, int num_instancias);
 
   SuperficieRevolucion(const char * nombre_archivo, int num_instancias);
-  
+
+};
+
+class BarridoLineal:public MallaVirtual
+{
+  protected:
+    std::vector <float> vertices_plano;
+    int num_instancias;
+    int altura;
+
+  public:
+
+  BarridoLineal(){};
+
+  BarridoLineal(std::vector <float> vertices_plano, int num_instancias, int altura);
+
 };
