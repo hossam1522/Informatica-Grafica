@@ -502,6 +502,54 @@ SuperficieRevolucion superficie("plys/perfil.ply", 9);
 
 /**************************************************************************************/
 
+BarridoLineal::BarridoLineal(std::vector <float> vertices_plano, int num_instancias, int altura){
+  this->vertices_plano = vertices_plano;
+  this->num_instancias = num_instancias;
+  this->altura = altura;
+
+  for (int i=0; i<num_instancias; i++)
+    for (int j=0; j<vertices_plano.size(); j+=3){
+
+      vertices.push_back(vertices_plano[j]);
+
+      vertices.push_back(vertices_plano[j+1] + altura*i/(num_instancias-1));
+
+      vertices.push_back(vertices_plano[j+2]);
+    }
+
+  int n = vertices_plano.size()/3*(num_instancias-1);
+
+  for (int i=0; i<num_instancias-1; i++)
+    for (int j=0; j<vertices_plano.size()-3; j+=3){
+      int k = i*vertices_plano.size()/3 + j/3;
+
+      triangulos.push_back(k % n);
+      triangulos.push_back((k+vertices_plano.size()/3) % n);
+      triangulos.push_back((k+vertices_plano.size()/3+1) % n);
+
+      triangulos.push_back(k % n);
+      triangulos.push_back((k+vertices_plano.size()/3+1) % n);
+      triangulos.push_back((k+1) % n);
+    }
+
+  normales_vertices = calculoNormalVertices();
+}
+
+// Ejemplo Cilindro a partir de circulo en un plano
+/* float radio = 1;
+int num_instancias = 9;
+vector<float> plano;
+for (int i=0; i<num_instancias; i++){
+  double alpha = 2*M_PI*i/(num_instancias-1);
+  plano.push_back(radio*cos(alpha));
+  plano.push_back(0);
+  plano.push_back(radio*sin(alpha));
+}
+
+BarridoLineal cilindro(plano, 9, 3); */
+
+/**************************************************************************************/
+
 /**	void Dibuja( void )
 
 Procedimiento de dibujo del modelo. Es llamado por glut cada vez que se debe redibujar.
@@ -572,6 +620,24 @@ void Dibuja (void)
   //glShadeModel(GL_FLAT);
   //malla2.draw_flat();
   malla2.draw();
+
+  glColor3f(0.8, 0.0, 0);
+  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color3);
+  glTranslatef(-10, 0, 5);
+  //glShadeModel(GL_FLAT);
+  //malla2.draw_flat();
+  float radio = 1;
+  int num_instancias = 9;
+  vector<float> plano;
+  for (int i=0; i<num_instancias; i++){
+    double alpha = 2*M_PI*i/(num_instancias-1);
+    plano.push_back(radio*cos(alpha));
+    plano.push_back(0);
+    plano.push_back(radio*sin(alpha));
+  }
+
+  BarridoLineal cilindro(plano, 9, 3);
+  cilindro.draw();
 
 
   glPopMatrix ();		// Desapila la transformacion geometrica
