@@ -228,7 +228,7 @@ Octaedro octaedro (4,2);
 
 /**************************************************************************************/
 
-MallaVirtual::MallaVirtual(vector <float> vertices, vector <int> triangulos)
+MallaVirtual::MallaVirtual(vector <float> vert, vector <int> triang)
 {
   this->vertices = vertices;
   this->triangulos = triangulos;
@@ -398,9 +398,9 @@ MallaVirtual malla2("plys/big_dodge.ply");
 
 /**************************************************************************************/
 
-SuperficieRevolucion::SuperficieRevolucion(vector<float> vertices_ply, int num_instancias){
-  this->vertices_ply = vertices_ply;
-  this->num_instancias = num_instancias;
+SuperficieRevolucion::SuperficieRevolucion(vector<float> vert, int num_inst){
+  this->vertices_ply = vert;
+  this->num_instancias = num_inst;
 
   if (vertices_ply[0] !=0 || vertices_ply[2]!=0){
     float h = vertices_ply[1];
@@ -448,9 +448,9 @@ SuperficieRevolucion::SuperficieRevolucion(vector<float> vertices_ply, int num_i
   normales_vertices = calculoNormalVertices();
 }
 
-SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_instancias){
+SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_inst){
   ply::read_vertices(nombre_archivo, vertices_ply);
-  this->num_instancias = num_instancias;
+  this->num_instancias = num_inst;
 
   if (vertices_ply[0] !=0 || vertices_ply[2]!=0){
     float h = vertices_ply[1];
@@ -502,20 +502,35 @@ SuperficieRevolucion superficie("plys/perfil.ply", 9);
 
 /**************************************************************************************/
 
-BarridoLineal::BarridoLineal(std::vector <float> vertices_plano, int num_instancias, int altura){
-  this->vertices_plano = vertices_plano;
-  this->num_instancias = num_instancias;
-  this->altura = altura;
+BarridoLineal::BarridoLineal(std::vector <float> vert, vector<float> direcc, int num_inst, int alt){
+  this->vertices_plano = vert;
+  this->direccion = normalizaVector(direcc);
+  //this->direccion = direcc;
+  this->num_instancias = num_inst;
+  this->altura = alt;
 
-  for (int i=0; i<num_instancias; i++)
+  for (int i=0; i<num_instancias; i++){
+
+    float h = i * altura / (num_instancias-1);
+
     for (int j=0; j<vertices_plano.size(); j+=3){
 
-      vertices.push_back(vertices_plano[j]);
+      /* vertices.push_back(vertices_plano[j]);
 
       vertices.push_back(vertices_plano[j+1] + altura*i/(num_instancias-1));
 
-      vertices.push_back(vertices_plano[j+2]);
+      vertices.push_back(vertices_plano[j+2]); */
+
+      float x = h/direccion[1];
+
+      vertices.push_back(vertices_plano[j]+direccion[0]*x);
+
+      vertices.push_back(vertices_plano[j+1]+h);
+
+      vertices.push_back(vertices_plano[j+2]+direccion[2]*x);
+
     }
+  }
 
   int n = vertices_plano.size()/3*(num_instancias-1);
 
@@ -626,17 +641,17 @@ void Dibuja (void)
   glTranslatef(-10, 0, 5);
   //glShadeModel(GL_FLAT);
   //malla2.draw_flat();
-  float radio = 1;
-  int num_instancias = 9;
+  float radio = 2;
   vector<float> plano;
-  for (int i=0; i<num_instancias; i++){
-    double alpha = 2*M_PI*i/(num_instancias-1);
+  vector<float> direcc = {2, 2, 2};
+  for (int i=0; i<18; i++){
+    double alpha = 2*M_PI*i/(18-1);
     plano.push_back(radio*cos(alpha));
     plano.push_back(0);
     plano.push_back(radio*sin(alpha));
   }
 
-  BarridoLineal cilindro(plano, 9, 3);
+  BarridoLineal cilindro(plano, direcc, 9, 5);
   cilindro.draw();
 
 

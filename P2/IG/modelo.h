@@ -134,7 +134,7 @@ class MallaVirtual:public Objeto3D
 
   MallaVirtual(){};
 
-  MallaVirtual(std::vector <float> vertices, std::vector <int> triangulos);
+  MallaVirtual(std::vector <float> vert, std::vector <int> triang);
 
   MallaVirtual(const char * nombre_archivo);
 
@@ -162,9 +162,9 @@ class SuperficieRevolucion:public MallaVirtual
 
   SuperficieRevolucion(){};
 
-  SuperficieRevolucion(std::vector <float> vertices_ply, int num_instancias);
+  SuperficieRevolucion(std::vector <float> vert, int num_inst);
 
-  SuperficieRevolucion(const char * nombre_archivo, int num_instancias);
+  SuperficieRevolucion(const char * nombre_archivo, int num_inst);
 
 };
 
@@ -172,6 +172,7 @@ class BarridoLineal:public MallaVirtual
 {
   protected:
     std::vector <float> vertices_plano;
+    std::vector <float> direccion;
     int num_instancias;
     int altura;
 
@@ -179,6 +180,6 @@ class BarridoLineal:public MallaVirtual
 
   BarridoLineal(){};
 
-  BarridoLineal(std::vector <float> vertices_plano, int num_instancias, int altura);
+  BarridoLineal(std::vector <float> vert, std::vector<float> direcc, int num_inst, int alt);
 
 };
