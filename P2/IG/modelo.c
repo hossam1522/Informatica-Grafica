@@ -505,7 +505,6 @@ SuperficieRevolucion superficie("plys/perfil.ply", 9);
 BarridoLineal::BarridoLineal(std::vector <float> vert, vector<float> direcc, int num_inst, int alt){
   this->vertices_plano = vert;
   this->direccion = normalizaVector(direcc);
-  //this->direccion = direcc;
   this->num_instancias = num_inst;
   this->altura = alt;
 
@@ -514,12 +513,6 @@ BarridoLineal::BarridoLineal(std::vector <float> vert, vector<float> direcc, int
     float h = i * altura / (num_instancias-1);
 
     for (int j=0; j<vertices_plano.size(); j+=3){
-
-      /* vertices.push_back(vertices_plano[j]);
-
-      vertices.push_back(vertices_plano[j+1] + altura*i/(num_instancias-1));
-
-      vertices.push_back(vertices_plano[j+2]); */
 
       float x = h/direccion[1];
 
@@ -534,7 +527,7 @@ BarridoLineal::BarridoLineal(std::vector <float> vert, vector<float> direcc, int
 
   int n = vertices_plano.size()/3*(num_instancias-1);
 
-  for (int i=0; i<num_instancias-1; i++)
+  for (int i=0; i<num_instancias-2; i++)
     for (int j=0; j<vertices_plano.size()-3; j+=3){
       int k = i*vertices_plano.size()/3 + j/3;
 
@@ -549,19 +542,6 @@ BarridoLineal::BarridoLineal(std::vector <float> vert, vector<float> direcc, int
 
   normales_vertices = calculoNormalVertices();
 }
-
-// Ejemplo Cilindro a partir de circulo en un plano
-/* float radio = 1;
-int num_instancias = 9;
-vector<float> plano;
-for (int i=0; i<num_instancias; i++){
-  double alpha = 2*M_PI*i/(num_instancias-1);
-  plano.push_back(radio*cos(alpha));
-  plano.push_back(0);
-  plano.push_back(radio*sin(alpha));
-}
-
-BarridoLineal cilindro(plano, 9, 3); */
 
 /**************************************************************************************/
 
@@ -580,6 +560,7 @@ void Dibuja (void)
   float  color[4] = { 0.8, 0.0, 1, 1 };
   float color2[4] = { 0.0, 1.0, 0, 1 };
   float color3[4] = { 0.8, 0.0, 0, 1 };
+  float color4[4] = { 0.0, 0.0, 1, 1 };
 
   glPushMatrix ();		// Apila la transformacion geometrica actual
 
@@ -612,47 +593,32 @@ void Dibuja (void)
 
   glColor3f(0, 1, 0);
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color2);
-  glTranslatef(-7, 0, 0);
-  //glShadeModel(GL_SMOOTH);
-  //malla1.draw_smooth();
+  glTranslatef(-12, 0, 0);
   malla1.draw();
 
   glColor3f(0.8, 0.0, 1);
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
   glTranslatef(7, 0, 0);
-  //superficie.draw_smooth();
   superficie.draw();
 
-  /* glColor3f(0.8, 0.0, 1);
-  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-  glTranslatef(7, 0, 0);
-  glShadeModel(GL_FLAT);
-  superficie.draw_flat(); */
-
-  glColor3f(0.8, 0.0, 0);
-  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color3);
-  glTranslatef(10, 0, 0);
-  //glShadeModel(GL_FLAT);
-  //malla2.draw_flat();
-  malla2.draw();
-
-  glColor3f(0.8, 0.0, 0);
-  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color3);
-  glTranslatef(-10, 0, 5);
-  //glShadeModel(GL_FLAT);
-  //malla2.draw_flat();
+  glColor3f(0, 0.0, 1);
+  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color4);
+  glTranslatef(3.5, 0, 0);
   float radio = 2;
   vector<float> plano;
-  vector<float> direcc = {2, 2, 2};
   for (int i=0; i<18; i++){
     double alpha = 2*M_PI*i/(18-1);
     plano.push_back(radio*cos(alpha));
     plano.push_back(0);
     plano.push_back(radio*sin(alpha));
   }
-
-  BarridoLineal cilindro(plano, direcc, 9, 5);
+  BarridoLineal cilindro(plano, vector<float>()={1,1,0}, 6, 5);
   cilindro.draw();
+
+  glColor3f(0.8, 0.0, 0);
+  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color3);
+  glTranslatef(13.5, 0, 0);
+  malla2.draw();
 
 
   glPopMatrix ();		// Desapila la transformacion geometrica
