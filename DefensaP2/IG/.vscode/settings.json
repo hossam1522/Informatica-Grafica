@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "vector": "c",
+        "random": "c"
+    },
+    "editor.tabSize": 2
+}
