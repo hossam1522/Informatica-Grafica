@@ -36,8 +36,6 @@
 //#include "hiply.h"
 
 
-
-
 /*=================================================*/
 
 /**	int main( int argc, char *argv[] )	
@@ -66,6 +64,8 @@ int main (int argc, char *argv[])
 
 // Inicializa las variables del modelo
   initModel ();
+  setParameter (1);
+  leeArchivos ();
 
 // Inicializa las funciones de dibujo y cambio de tamanyo de la ventana X
   glutDisplayFunc (Dibuja);

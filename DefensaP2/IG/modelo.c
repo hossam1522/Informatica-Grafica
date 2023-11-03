@@ -41,6 +41,7 @@ using namespace std;
 int modo = GL_FILL;    // Modo de visualizacion inicial (GL_POINT, GL_LINE, GL_FILL)
 bool iluminacion = false;   // Visualizacion inicial con iluminacion
 bool sombreado = false;   // Visualizacion inicial con sombreado plano (false) y suave (true)
+int parameter = 0;
 
 /**	void initModel()
 
@@ -51,6 +52,48 @@ Inicializa el modelo y de las variables globales
 void
 initModel ()
 {
+
+}
+
+/**************************************************************************************/
+
+void setParameter(int p)
+{
+  parameter = p;
+}
+
+void leeArchivos(char * nombre_archivo)
+{
+  if (parameter == 0){
+    MallaVirtual malla1("plys/beethoven.ply");
+    malla1.draw();
+  }
+
+  if (parameter == 3){
+    MallaVirtual malla2("plys/big_dodge.ply");
+    /* MallaVirtual malla1("001-benchmark/bishop.ply");
+    MallaVirtual malla2("001-benchmark/helmet.ply"); */
+    malla2.draw();
+  }
+
+  if (parameter == 1){
+    //SuperficieRevolucion superficie("plys/perfil.ply", 9);
+    SuperficieRevolucion superficie("000-benchmark/perfil-3.ply", 9);
+    superficie.draw();
+  }
+
+  if (parameter == 2){ 
+    float radio = 2;
+    vector<float> plano;
+    for (int i=0; i<18; i++){
+      double alpha = 2*M_PI*i/(18-1);
+      plano.push_back(radio*cos(alpha));
+      plano.push_back(0);
+      plano.push_back(radio*sin(alpha));
+    }
+    BarridoLineal cilindro(plano, vector<float>()={1,1,0}, 6, 5);
+    cilindro.draw();
+  }
 
 }
 
@@ -393,9 +436,6 @@ vector<float> MallaVirtual::calculoNormalVertices(){
   return normalizaVector(normales);
 }
 
-MallaVirtual malla1("plys/beethoven.ply");
-MallaVirtual malla2("plys/big_dodge.ply");
-
 /**************************************************************************************/
 
 SuperficieRevolucion::SuperficieRevolucion(vector<float> vert, int num_inst){
@@ -423,6 +463,8 @@ SuperficieRevolucion::SuperficieRevolucion(vector<float> vert, int num_inst){
 
       if (vertices_ply[j] < 0)
         vertices_ply[j] = -vertices_ply[j];
+      else if (vertices_ply[j] > 1.0)
+        vertices_ply[j] /= 10;
 
       double alpha = 2*M_PI*i/(num_instancias-1);
 
@@ -476,6 +518,8 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
 
       if (vertices_ply[j] < 0)
         vertices_ply[j] = -vertices_ply[j];
+      else if (vertices_ply[j] > 1.0)
+        vertices_ply[j] /= 10;
 
       double alpha = 2*M_PI*i/(num_instancias-1);
 
@@ -503,9 +547,6 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
 
   normales_vertices = calculoNormalVertices();
 }
-
-//SuperficieRevolucion superficie("plys/perfil.ply", 9);
-SuperficieRevolucion superficie("000-benchmark/perfil-3.ply", 9);
 
 /**************************************************************************************/
 
@@ -598,35 +639,32 @@ void Dibuja (void)
 
   // Dibuja el modelo (A rellenar en prácticas 1,2 y 3)
 
-  glColor3f(0, 1, 0);
-  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color2);
-  glTranslatef(-12, 0, 0);
-  malla1.draw();
+  /* if (parameter == 0) {
+    glColor3f(0, 1, 0);
+    glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color2);
+    glTranslatef(-12, 0, 0);
+    malla1.draw();
 
-  glColor3f(0.8, 0.0, 1);
-  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-  glTranslatef(7, 0, 0);
-  superficie.draw();
+  } else if (parameter == 1) {
+    glColor3f(0.8, 0.0, 1);
+    glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
+    glTranslatef(7, 0, 0);
+    superficie.draw();
 
-  glColor3f(0, 0.0, 1);
-  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color4);
-  glTranslatef(3.5, 0, 0);
-  float radio = 2;
-  vector<float> plano;
-  for (int i=0; i<18; i++){
-    double alpha = 2*M_PI*i/(18-1);
-    plano.push_back(radio*cos(alpha));
-    plano.push_back(0);
-    plano.push_back(radio*sin(alpha));
-  }
-  BarridoLineal cilindro(plano, vector<float>()={1,1,0}, 6, 5);
-  cilindro.draw();
+  } else if (parameter == 2) {
+    glColor3f(0, 0.0, 1);
+    glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color4);
+    glTranslatef(3.5, 0, 0);
+    cilindro.draw();
 
-  glColor3f(0.8, 0.0, 0);
-  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color3);
-  glTranslatef(13.5, 0, 0);
-  malla2.draw();
+  } else if (parameter == 3) {
+    glColor3f(0.8, 0.0, 0);
+    glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color3);
+    glTranslatef(13.5, 0, 0);
+    malla2.draw();
+  } */
 
+  //leeArchivos();
 
   glPopMatrix ();		// Desapila la transformacion geometrica
 

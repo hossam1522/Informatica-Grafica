@@ -39,6 +39,10 @@ void Dibuja (void);
 **/
 void idle (int v);
 
+void leeArchivos (char * nombre_archivo = NULL);
+
+void setParameter (int p);
+
 /**
 	Funcion de inicializacion del modelo y de las variables globales
 **/
