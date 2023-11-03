@@ -421,6 +421,9 @@ SuperficieRevolucion::SuperficieRevolucion(vector<float> vert, int num_inst){
   for (int i=0; i<num_instancias; i++)
     for (int j=0; j<vertices_ply.size(); j+=3){
 
+      if (vertices_ply[j] < 0)
+        vertices_ply[j] = -vertices_ply[j];
+
       double alpha = 2*M_PI*i/(num_instancias-1);
 
       vertices.push_back(vertices_ply[j]*cos(alpha) + vertices_ply[j+2]*sin(alpha) );
@@ -471,6 +474,9 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
   for (int i=0; i<num_instancias; i++)
     for (int j=0; j<vertices_ply.size(); j+=3){
 
+      if (vertices_ply[j] < 0)
+        vertices_ply[j] = -vertices_ply[j];
+
       double alpha = 2*M_PI*i/(num_instancias-1);
 
       vertices.push_back(vertices_ply[j]*cos(alpha) + vertices_ply[j+2]*sin(alpha) );
@@ -498,7 +504,8 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
   normales_vertices = calculoNormalVertices();
 }
 
-SuperficieRevolucion superficie("plys/perfil.ply", 9);
+//SuperficieRevolucion superficie("plys/perfil.ply", 9);
+SuperficieRevolucion superficie("000-benchmark/perfil-3.ply", 9);
 
 /**************************************************************************************/
 
