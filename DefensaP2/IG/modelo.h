@@ -39,14 +39,10 @@ void Dibuja (void);
 **/
 void idle (int v);
 
-void leeArchivos (char * nombre_archivo = NULL);
-
-void setParameter (int p);
-
 /**
 	Funcion de inicializacion del modelo y de las variables globales
 **/
-void initModel ();
+void initModel (int opcion = 0, char * nombre_archivo = NULL);
 
 /**
 	Funcion de cambio de modo
@@ -153,6 +149,8 @@ class MallaVirtual:public Objeto3D
   std::vector<float> calculoNormalCara(std::vector<float> v1, std::vector<float> v2, std::vector<float> v3);
 
   std::vector<float> normalizaVector(std::vector<float> v);
+
+  MallaVirtual & operator=(const MallaVirtual & otro);
 
 };
 

@@ -1,14 +1,14 @@
 /*	Prácticas de Informática Gráfica
 
 	Grupo C					Curso 2022-23
- 	
+
 	Codigo base para la realización de las practicas de IG
-	
+
 	Estudiante: Hossam El Amraoui Leghzali
 
 	Programa principal
 =======================================================
-	G. Arroyo, J.C. Torres 
+	G. Arroyo, J.C. Torres
 	Dpto. Lenguajes y Sistemas Informticos
 	(Univ. de Granada)
 
@@ -20,7 +20,7 @@
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details 
+ GNU General Public License for more details
  http://www.gnu.org/copyleft/gpl.html
 
 =======================================================
@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <cstring>
 #include <GL/glut.h>		// Libreria de utilidades de OpenGL
 #include "practicasIG.h"
 //#include "hiply.h"
@@ -38,34 +39,47 @@
 
 /*=================================================*/
 
-/**	int main( int argc, char *argv[] )	
+/**	int main( int argc, char *argv[] )
 	Programa principal.
-	
+
 	Inicializa glut y openGL
 	Crea la ventana X
 	Inicializa las variables globales
-	lanza los gestores de eventos	
+	lanza los gestores de eventos
 **/
 
 int main (int argc, char *argv[])
 {
 // Inicializa glu y openGL
   glutInit (&argc, argv);
+  int opcion = 0;
 
-// Crea una ventana X para la salida grafica en la posicion 0,0 con tamaño 800x800, con colores RGB-alfa, con doble buffer, y 
+  if (argc > 1) {
+    if (strcmp (argv[1], "--help") == 0 && argc == 2){
+      printHelp ();
+      exit (0);
+    }
+    else if (strcmp (argv[1], "--spin") == 0 && argc == 3){
+      opcion = 1;
+    }
+    else if (strcmp (argv[1], "--load") == 0 && argc == 3){
+      opcion = 2;
+    }
+    else {
+      printf ("Opción no valida, consulta las opciones disponibles usando --help\n");
+      exit (1);
+    }
+  }
+
+// Crea una ventana X para la salida grafica en la posicion 0,0 con tamaño 800x800, con colores RGB-alfa, con doble buffer, y
 // buffer de profundidad
-
-
-
   glutInitWindowPosition (0, 0);
   glutInitWindowSize (800, 800);
   glutInitDisplayMode (GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
   glutCreateWindow ("IG. Curso 2022/23. Autor: Hossam El Amraoui Leghzali");
 
 // Inicializa las variables del modelo
-  initModel ();
-  setParameter (1);
-  leeArchivos ();
+  initModel (opcion, argv[2]);
 
 // Inicializa las funciones de dibujo y cambio de tamanyo de la ventana X
   glutDisplayFunc (Dibuja);

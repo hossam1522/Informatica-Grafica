@@ -41,7 +41,17 @@ using namespace std;
 int modo = GL_FILL;    // Modo de visualizacion inicial (GL_POINT, GL_LINE, GL_FILL)
 bool iluminacion = false;   // Visualizacion inicial con iluminacion
 bool sombreado = false;   // Visualizacion inicial con sombreado plano (false) y suave (true)
-int parameter = 0;
+int  a_dibujar = 0;     // Objeto a dibujar (0: practica original, 1: superficie, 2: malla)
+MallaVirtual malla;
+SuperficieRevolucion superficie;
+
+/**************************************************************************************/
+// Práctica como estaba originalmente
+MallaVirtual malla1;
+MallaVirtual malla2;
+SuperficieRevolucion superficie1;
+/**************************************************************************************/
+
 
 /**	void initModel()
 
@@ -50,51 +60,20 @@ Inicializa el modelo y de las variables globales
 
 **/
 void
-initModel ()
+initModel (int opcion, char * nombre_archivo)
 {
-
-}
-
-/**************************************************************************************/
-
-void setParameter(int p)
-{
-  parameter = p;
-}
-
-void leeArchivos(char * nombre_archivo)
-{
-  if (parameter == 0){
-    MallaVirtual malla1("plys/beethoven.ply");
-    malla1.draw();
+  if (opcion == 0){
+    malla1 = MallaVirtual("plys/beethoven.ply");
+    malla2 = MallaVirtual("plys/big_dodge.ply");
+    superficie1 = SuperficieRevolucion("plys/perfil.ply", 9);
+  }
+  else if (opcion == 1){
+    superficie = SuperficieRevolucion(nombre_archivo, 20);
+  } else if (opcion == 2){
+    malla = MallaVirtual(nombre_archivo);
   }
 
-  if (parameter == 3){
-    MallaVirtual malla2("plys/big_dodge.ply");
-    /* MallaVirtual malla1("001-benchmark/bishop.ply");
-    MallaVirtual malla2("001-benchmark/helmet.ply"); */
-    malla2.draw();
-  }
-
-  if (parameter == 1){
-    //SuperficieRevolucion superficie("plys/perfil.ply", 9);
-    SuperficieRevolucion superficie("000-benchmark/perfil-3.ply", 9);
-    superficie.draw();
-  }
-
-  if (parameter == 2){ 
-    float radio = 2;
-    vector<float> plano;
-    for (int i=0; i<18; i++){
-      double alpha = 2*M_PI*i/(18-1);
-      plano.push_back(radio*cos(alpha));
-      plano.push_back(0);
-      plano.push_back(radio*sin(alpha));
-    }
-    BarridoLineal cilindro(plano, vector<float>()={1,1,0}, 6, 5);
-    cilindro.draw();
-  }
-
+  a_dibujar = opcion;
 }
 
 /**************************************************************************************/
@@ -172,8 +151,6 @@ void Cubo::draw()
 
 }
 
-Cubo cubo(2);
-
 /**************************************************************************************/
 
 void Piramide::draw(){
@@ -212,8 +189,6 @@ void Piramide::draw(){
   glEnd();
 
 }
-
-Piramide piramide(4, 2);
 
 /**************************************************************************************/
 
@@ -266,8 +241,6 @@ void Octaedro::draw(){
   glEnd();
 
 }
-
-Octaedro octaedro (4,2);
 
 /**************************************************************************************/
 
@@ -434,6 +407,14 @@ vector<float> MallaVirtual::calculoNormalVertices(){
   }
 
   return normalizaVector(normales);
+}
+
+MallaVirtual& MallaVirtual::operator=(const MallaVirtual &m){
+  vertices = m.vertices;
+  triangulos = m.triangulos;
+  normales_vertices = m.normales_vertices;
+
+  return *this;
 }
 
 /**************************************************************************************/
@@ -639,32 +620,43 @@ void Dibuja (void)
 
   // Dibuja el modelo (A rellenar en prácticas 1,2 y 3)
 
-  /* if (parameter == 0) {
+  glColor3f(0, 1, 0);
+  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color2);
+
+  if (a_dibujar == 0){
     glColor3f(0, 1, 0);
     glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color2);
     glTranslatef(-12, 0, 0);
     malla1.draw();
 
-  } else if (parameter == 1) {
     glColor3f(0.8, 0.0, 1);
     glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
     glTranslatef(7, 0, 0);
-    superficie.draw();
+    superficie1.draw();
 
-  } else if (parameter == 2) {
     glColor3f(0, 0.0, 1);
     glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color4);
     glTranslatef(3.5, 0, 0);
+    float radio = 2;
+    vector<float> plano;
+    for (int i=0; i<18; i++){
+      double alpha = 2*M_PI*i/(18-1);
+      plano.push_back(radio*cos(alpha));
+      plano.push_back(0);
+      plano.push_back(radio*sin(alpha));
+    }
+    BarridoLineal cilindro(plano, vector<float>()={1,1,0}, 6, 5);
     cilindro.draw();
 
-  } else if (parameter == 3) {
     glColor3f(0.8, 0.0, 0);
     glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color3);
     glTranslatef(13.5, 0, 0);
     malla2.draw();
-  } */
-
-  //leeArchivos();
+  }
+  else if (a_dibujar == 1)
+    superficie.draw();
+  else if (a_dibujar == 2)
+    malla.draw();
 
   glPopMatrix ();		// Desapila la transformacion geometrica
 

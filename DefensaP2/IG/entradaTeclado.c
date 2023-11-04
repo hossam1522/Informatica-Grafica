@@ -1,13 +1,13 @@
 /*	Prácticas de Informática Gráfica
 
 	Grupo C					Curso 2022-23
- 	
+
 	Codigo base para la realización de las practicas de IG
-	
-	Estudiante: 
+
+	Estudiante:
 
 =======================================================
-	G. Arroyo, J.C. Torres 
+	G. Arroyo, J.C. Torres
 	Dpto. Lenguajes y Sistemas Informticos
 	(Univ. de Granada)
 
@@ -19,7 +19,7 @@
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details 
+ GNU General Public License for more details
  http://www.gnu.org/copyleft/gpl.html
 
 =======================================================/
@@ -34,7 +34,7 @@ modulo entradaTeclado.c
 #include "practicasIG.h"
 
 
-/** 
+/**
 
 Imprime en la consola las instrucciones del programa
 
@@ -50,8 +50,18 @@ void printHelp ()
   printf ("h, H: Imprime informacion de ayuda \n");
   printf ("PgUp, PgDn: avanza y retrocede la cámara \n\n");
   printf ("+,-: avanza y retrocede la cámara \n\n");
-  printf ("Teclas de movimiento de cursor: giran la camara\n");
-  // Anyade la informacion de las opciones que introduzcas aqui !!       
+  printf ("Teclas de movimiento de cursor: giran la camara\n\n");
+  // Anyade la informacion de las opciones que introduzcas aqui !!
+  printf ("p: muestra únicamente los vértices de la figura \n\n");
+  printf ("l: muestra únicamente las aristas de la figura \n\n");
+  printf ("f: rellena la figura con color \n\n");
+  printf ("i: cambia el modo de iluminación \n\n");
+  printf ("s: cambia el tipo de sombreado (flat, smooth) \n\n");
+  printf ("\n\n");
+  printf (" Uso del programa (parámetros disponibles): \n\n");
+  printf ("\t--help -> muestra la ayuda \n\n");
+  printf ("\t--spin ruta/a/archivo.ply -> muestra solamente el objeto de revolución creado por el perfil del archivo indicado por argumento. \n\n");
+  printf ("\t--load ruta/a/archivo.ply -> muestra solamente el objeto PLY cargado a partir del archivo indicado como argumento. \n\n");
 
   printf ("\n Escape: Salir");
   printf ("\n\n\n");
