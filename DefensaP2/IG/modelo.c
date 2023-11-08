@@ -444,8 +444,8 @@ SuperficieRevolucion::SuperficieRevolucion(vector<float> vert, int num_inst){
 
       if (vertices_ply[j] < 0)
         vertices_ply[j] = -vertices_ply[j];
-      else if (vertices_ply[j] > 1.0)
-        vertices_ply[j] /= 10;
+      /* else if (vertices_ply[j] > 1.0)
+        vertices_ply[j] /= 10; */
 
       double alpha = 2*M_PI*i/(num_instancias-1);
 
