@@ -29,7 +29,7 @@
 
 #include <vector>
 
-enum TipoTransformacion {ROTACION, TRANSLACION};
+enum TipoTransformacion {ROTACION, TRASLACION};
 
 /**
 	Funcion de redibujado. Se ejecuta con los eventos postRedisplay
@@ -198,7 +198,7 @@ class BarridoLineal:public MallaVirtual
 };
 
 
-class Nodo
+class Nodo : public Objeto3D
 {
   protected:
     std::vector <Nodo*> hijos;
@@ -206,28 +206,11 @@ class Nodo
   public:
     Nodo(){}
 
-    Nodo(std::vector <Nodo*> hijos)
-    {
-      this->hijos = hijos;
-    }
-
-    /* void draw(){
-      for (int i = 0; i < hijos.size(); i++) {
-        (Modelo3D)hijos[i]->draw();
-      }
-    } */
+    Nodo(std::vector <Nodo*> hijos){this->hijos = hijos;}
 
     void draw();
 
-    std::vector <Nodo*> getHijos()
-    {
-      return hijos;
-    }
-
-    void agregarHijo(Nodo* hijo)
-    {
-      hijos.push_back(hijo);
-    }
+    void addHijo(Nodo* hijo){hijos.push_back(hijo);}
 };
 
 class Transformacion:public Nodo
@@ -235,26 +218,19 @@ class Transformacion:public Nodo
   protected:
     TipoTransformacion tipo;
     std::vector<float> valor;
+    bool variable;
 
   public:
     Transformacion(){};
 
-    Transformacion(TipoTransformacion tipo, std::vector<float> valor)
-    {
-      this->tipo = tipo;
-      this->valor = valor;
-    }
+    Transformacion(TipoTransformacion tipo, std::vector<float> valor, bool variable=false)
+    {this->tipo = tipo;this->valor = valor;this->variable = variable;}
 
-    void draw(){
-      switch (tipo) {
-        case ROTACION:
-          glRotatef(valor[0], valor[1], valor[2], valor[3]);
-          break;
-        case TRANSLACION:
-          glTranslatef(valor[0], valor[1], valor[2]);
-          break;
-      }
-    }
+    void draw();
+
+    void setValorRotacion(float valor){if(tipo==ROTACION)this->valor[0] = valor;}
+
+    void setValorTraslacion(std::vector<float> valor){if(tipo==TRASLACION)this->valor = valor;}
 };
 
 class Modelo3D:public Nodo
@@ -265,12 +241,7 @@ class Modelo3D:public Nodo
   public:
     Modelo3D(){};
 
-    Modelo3D(Objeto3D* objeto)
-    {
-      this->objeto = objeto;
-    }
+    Modelo3D(Objeto3D* objeto){this->objeto = objeto;}
 
-    void draw(){
-      objeto->draw();
-    }
+    void draw(){objeto->draw();}
 };

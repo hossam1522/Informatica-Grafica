@@ -56,13 +56,18 @@ Cubo C1(2, 6, 1);
 Modelo3D A(&A1);
 Modelo3D B(&B1);
 Modelo3D C(&C1);
-Nodo *nodo1 = new Nodo();
-Transformacion xd(TRANSLACION, vector<float>()={3, 0, 0});
-Transformacion T1(TRANSLACION, vector<float>()={1, 11, 1});
-Transformacion T2(TRANSLACION, vector<float>()={3.5, 0, 0});
-Transformacion T3(TRANSLACION, vector<float>()={-3, 1, 1});
-Transformacion T4(TRANSLACION, vector<float>()={0, -6, 0});
-Transformacion T5(TRANSLACION, vector<float>()={-0.5, 0, -1});
+Nodo *Molino = new Nodo();
+Nodo *Cabeza = new Nodo();
+Nodo *B_M = new Nodo();
+Nodo *Aspas = new Nodo();
+Nodo *Aspa = new Nodo();
+Transformacion T1(TRASLACION, vector<float>()={1, 11, 1});
+Transformacion T2(TRASLACION, vector<float>()={3.5, 0, 0});
+Transformacion T3(TRASLACION, vector<float>()={-3, 1, -1});
+Transformacion T4(TRASLACION, vector<float>()={0, -6, 0});
+Transformacion T5(TRASLACION, vector<float>()={-0.5, 0, -1});
+Transformacion Ra(ROTACION, vector<float>()={0, 0, 1, 0}, true);
+Transformacion Rb(ROTACION, vector<float>()={0, 1, 0, 0}, true);
 Transformacion R1(ROTACION, vector<float>()={-90, 0, 0, 1});
 Transformacion R2(ROTACION, vector<float>()={-20, 0, 1, 0});
 Transformacion R3(ROTACION, vector<float>()={40, 0, 1, 0});
@@ -80,9 +85,11 @@ void
 initModel (int opcion, char * nombre_archivo)
 {
   if (opcion == 0){
-    nodo1->agregarHijo(&A);
-    /* nodo1->agregarHijo(&xd);
-    nodo1->agregarHijo(&B); */
+    B_M->addHijo(&T3);B_M->addHijo(&R1);B_M->addHijo(&B);
+    Aspa->addHijo(&R4);Aspa->addHijo(&T5);Aspa->addHijo(&C);
+    Aspas->addHijo(&R2);Aspas->addHijo(Aspa);Aspas->addHijo(&R3);Aspas->addHijo(&T4);Aspas->addHijo(Aspa);
+    Cabeza->addHijo(B_M);Cabeza->addHijo(&T2);Cabeza->addHijo(&Rb);Cabeza->addHijo(Aspas);
+    Molino->addHijo(&A);Molino->addHijo(&T1);Molino->addHijo(&Ra);Molino->addHijo(Cabeza);
   }
   else if (opcion == 1){
     superficie = SuperficieRevolucion(nombre_archivo, 20);
@@ -592,11 +599,22 @@ BarridoLineal::BarridoLineal(std::vector <float> vert, vector<float> direcc, int
 /**************************************************************************************/
 
 void Nodo :: draw(){
+  glPushMatrix();
+    for (int i = 0; i < hijos.size(); i++) {
+      hijos[i]->draw();
+    }
+  glPopMatrix();
+}
 
-  for (int i = 0; i < hijos.size(); i++) {
-    hijos[i]->draw();
+void Transformacion :: draw(){
+  switch (tipo) {
+    case ROTACION:
+      glRotatef(valor[0], valor[1], valor[2], valor[3]);
+      break;
+    case TRASLACION:
+      glTranslatef(valor[0], valor[1], valor[2]);
+      break;
   }
-
 }
 
 /**************************************************************************************/
@@ -617,6 +635,7 @@ void Dibuja (void)
   float color2[4] = { 0.0, 1.0, 0, 1 };
   float color3[4] = { 0.8, 0.0, 0, 1 };
   float color4[4] = { 0.0, 0.0, 1, 1 };
+  float color5[4] = { 0.5, 0.5, 0.5, 1 };
 
   glPushMatrix ();		// Apila la transformacion geometrica actual
 
@@ -647,13 +666,11 @@ void Dibuja (void)
 
   // Dibuja el modelo (A rellenar en prácticas 1,2 y 3)
 
-  glColor3f(0, 1, 0);
-  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color2);
+  glColor3f(0.5, 0.5, 0.5);
+  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color5);
 
   if (a_dibujar == 0){
-    //cubo.draw();
-    nodo1->draw();
-    //A.draw();
+    Molino->draw();
   }
   else if (a_dibujar == 1)
     superficie.draw();
