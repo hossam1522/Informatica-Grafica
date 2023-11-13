@@ -50,9 +50,12 @@ SuperficieRevolucion superficie;
 MallaVirtual malla1;
 MallaVirtual malla2;
 SuperficieRevolucion superficie1;
-Cubo A(2, 10, 2);
-Cubo B(2, 6, 2);
-Cubo C(2, 6, 1);
+Cubo A1(2, 10, 2);
+Cubo B1(2, 6, 2);
+Cubo C1(2, 6, 1);
+Modelo3D A(&A1);
+Modelo3D B(&B1);
+Modelo3D C(&C1);
 Nodo *nodo1 = new Nodo();
 Transformacion xd(TRANSLACION, vector<float>()={3, 0, 0});
 Transformacion T1(TRANSLACION, vector<float>()={1, 11, 1});
@@ -78,8 +81,8 @@ initModel (int opcion, char * nombre_archivo)
 {
   if (opcion == 0){
     nodo1->agregarHijo(&A);
-    nodo1->agregarHijo(&xd);
-    nodo1->agregarHijo(&B);
+    /* nodo1->agregarHijo(&xd);
+    nodo1->agregarHijo(&B); */
   }
   else if (opcion == 1){
     superficie = SuperficieRevolucion(nombre_archivo, 20);
@@ -588,6 +591,13 @@ BarridoLineal::BarridoLineal(std::vector <float> vert, vector<float> direcc, int
 
 /**************************************************************************************/
 
+void Nodo :: draw(){
+
+  for (int i = 0; i < hijos.size(); i++) {
+    hijos[i]->draw();
+  }
+
+}
 
 /**************************************************************************************/
 
@@ -642,8 +652,8 @@ void Dibuja (void)
 
   if (a_dibujar == 0){
     //cubo.draw();
-    nodo1->draw_objetos();
-
+    nodo1->draw();
+    //A.draw();
   }
   else if (a_dibujar == 1)
     superficie.draw();

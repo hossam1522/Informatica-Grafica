@@ -201,29 +201,36 @@ class BarridoLineal:public MallaVirtual
 class Nodo
 {
   protected:
-    std::vector <Objeto3D*> hijos;
+    std::vector <Nodo*> hijos;
 
   public:
     Nodo(){}
 
-    Nodo(std::vector <Objeto3D*> hijos)
+    Nodo(std::vector <Nodo*> hijos)
     {
       this->hijos = hijos;
     }
 
-    void draw_objetos(){
+    /* void draw(){
       for (int i = 0; i < hijos.size(); i++) {
-        hijos[i]->draw();
+        (Modelo3D)hijos[i]->draw();
       }
+    } */
+
+    void draw();
+
+    std::vector <Nodo*> getHijos()
+    {
+      return hijos;
     }
 
-    void agregarHijo(Objeto3D* hijo)
+    void agregarHijo(Nodo* hijo)
     {
       hijos.push_back(hijo);
     }
 };
 
-class Transformacion:public Objeto3D
+class Transformacion:public Nodo
 {
   protected:
     TipoTransformacion tipo;
@@ -247,5 +254,23 @@ class Transformacion:public Objeto3D
           glTranslatef(valor[0], valor[1], valor[2]);
           break;
       }
+    }
+};
+
+class Modelo3D:public Nodo
+{
+  protected:
+    Objeto3D* objeto;
+
+  public:
+    Modelo3D(){};
+
+    Modelo3D(Objeto3D* objeto)
+    {
+      this->objeto = objeto;
+    }
+
+    void draw(){
+      objeto->draw();
     }
 };
