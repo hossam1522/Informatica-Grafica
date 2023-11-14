@@ -215,9 +215,6 @@ class Nodo : public Objeto3D
     void addHijo(Nodo* hijo){hijos.push_back(hijo);}
 
     std::vector <Nodo*> getHijos(){return hijos;}
-
-    void setValorRotacion(float valor, int i){hijos[i]->setValorRotacion(valor, i);}
-    float getValorRotacion(int i){ return hijos[i]->getValorRotacion(i);}
 };
 
 class Transformacion:public Nodo
@@ -237,9 +234,9 @@ class Transformacion:public Nodo
 
     bool esLibre(){return variable;}
 
-    float getValorRotacion(int i){if(tipo==ROTACION)return valor[0];else return -1;}
+    float getValorRotacion(){if(tipo==ROTACION)return valor[0];else return -1;}
 
-    void setValorRotacion(float valor, int i){if(tipo==ROTACION)this->valor[0] = valor;}
+    void setValorRotacion(float valor){if(tipo==ROTACION)this->valor[0] = valor;}
 
     std::vector<float> getValorTraslacion(){if(tipo==TRASLACION)return valor;else return {-1};}
 

@@ -123,8 +123,23 @@ void letra (unsigned char k, int x, int y)
     case 's':
       setSombreado ();		// S y s cambian a modo sombreado
       break;
-    case 'B':
+    case 'C':
       aumentarGradoLibertad(0);
+      break;
+    case 'c':
+      disminuirGradoLibertad(0);
+      break;
+    case 'V':
+      aumentarGradoLibertad(1);
+      break;
+    case 'v':
+      disminuirGradoLibertad(1);
+      break;
+    case 'B':
+      aumentarGradoLibertad(2);
+      break;
+    case 'b':
+      disminuirGradoLibertad(2);
       break;
     case 27:			// Escape  Terminar
       exit (0);

@@ -714,9 +714,38 @@ void setSombreado ()
 
 void aumentarGradoLibertad(int i){
   if (i == 0){
-    Molino->setValorRotacion(Molino->getValorRotacion(2) + 5, 2);
+    ((Transformacion*)Molino->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Molino->getHijos()[2])->getValorRotacion() + 5);
+    if ( ((Transformacion*)Molino->getHijos()[2])->getValorRotacion() > 360) {
+      ((Transformacion*)Molino->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Molino->getHijos()[2])->getValorRotacion()-360);
+    }
   }
   else if (i == 1){
-    Cabeza->setValorRotacion(Cabeza->getValorRotacion(2) + 5, 2);
+    ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() + 5);
+    if ( ((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() > 360) {
+      ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion()-360);
+    }
+  }
+}
+
+void disminuirGradoLibertad(int i){
+  if (i == 0){
+    ((Transformacion*)Molino->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Molino->getHijos()[2])->getValorRotacion() - 5);
+    if ( ((Transformacion*)Molino->getHijos()[2])->getValorRotacion() < 0) {
+      ((Transformacion*)Molino->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Molino->getHijos()[2])->getValorRotacion()+360);
+    }
+  }
+  else if (i == 1){
+    ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() - 5);
+    if ( ((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() < 0) {
+      ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion()+360);
+    }
   }
 }
