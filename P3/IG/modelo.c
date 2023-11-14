@@ -711,3 +711,12 @@ void setSombreado ()
 {
   sombreado = !sombreado;
 }
+
+void aumentarGradoLibertad(int i){
+  if (i == 0){
+    Molino->setValorRotacion(Molino->getValorRotacion(2) + 5, 2);
+  }
+  else if (i == 1){
+    Cabeza->setValorRotacion(Cabeza->getValorRotacion(2) + 5, 2);
+  }
+}
