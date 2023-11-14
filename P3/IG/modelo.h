@@ -61,11 +61,35 @@ void setIluminacion ();
 **/
 void setSombreado ();
 
+/**
+ * Funcion de cambio de animacion
+*/
 void setAnimacion();
 
+/**
+ * Devuelve el valor de la animacion
+*/
+bool getAnimacion();
+
+/**
+ * Aumenta el grado de libertad número i
+*/
 void aumentarGradoLibertad(int i);
 
+/**
+ * Disminuye el grado de libertad número i
+*/
 void disminuirGradoLibertad(int i);
+
+/**
+ * Aumenta la velocidad del grado de libertad número i (solo si la animación está activada)
+*/
+void aumentarVelocidadGradoLibertad(int i);
+
+/**
+ * Disminuye la velocidad del grado de libertad número i (solo si la animación está activada)
+*/
+void disminuirVelocidadGradoLibertad(int i);
 
 class Objeto3D
 {
@@ -238,11 +262,11 @@ class Transformacion:public Nodo
 
     float getValorRotacion(){if(tipo==ROTACION)return valor[0];else return -1;}
 
-    void setValorRotacion(float valor){if(tipo==ROTACION)this->valor[0] = valor;}
+    void setValorRotacion(float valor){if(tipo==ROTACION && variable==true)this->valor[0] = valor;}
 
     std::vector<float> getValorTraslacion(){if(tipo==TRASLACION)return valor;else return {-1};}
 
-    void setValorTraslacion(std::vector<float> valor){if(tipo==TRASLACION)this->valor = valor;}
+    void setValorTraslacion(std::vector<float> valor){if(tipo==TRASLACION && variable==true)this->valor = valor;}
 };
 
 class Modelo3D:public Nodo

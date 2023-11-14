@@ -43,6 +43,9 @@ bool iluminacion = false;   // Visualizacion inicial con iluminacion
 bool sombreado = false;   // Visualizacion inicial con sombreado plano (false) y suave (true)
 bool animacion = false;   // Animación inicial desactivada
 int  a_dibujar = 0;     // Objeto a dibujar (0: practica original, 1: superficie, 2: malla)
+float gl0 = 5;   // Grado de libertad 1
+float gl1 = 5;   // Grado de libertad 2
+float gl2 = 5;   // Grado de libertad 3
 MallaVirtual malla;
 SuperficieRevolucion superficie;
 
@@ -670,9 +673,8 @@ void Dibuja (void)
   glColor3f(0.5, 0.5, 0.5);
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color5);
 
-  if (a_dibujar == 0){
+  if (a_dibujar == 0)
     Molino->draw();
-  }
   else if (a_dibujar == 1)
     superficie.draw();
   else if (a_dibujar == 2)
@@ -722,8 +724,13 @@ void setAnimacion ()
   animacion = !animacion;
 }
 
+bool getAnimacion ()
+{
+  return animacion;
+}
+
 void aumentarGradoLibertad(int i){
-  if (i == 0){
+  if (i == 0 && !animacion){
     ((Transformacion*)Molino->getHijos()[2])->setValorRotacion
                                         (((Transformacion*)Molino->getHijos()[2])->getValorRotacion() + 5);
     if ( ((Transformacion*)Molino->getHijos()[2])->getValorRotacion() > 360) {
@@ -731,9 +738,25 @@ void aumentarGradoLibertad(int i){
                                         (((Transformacion*)Molino->getHijos()[2])->getValorRotacion()-360);
     }
   }
-  else if (i == 1){
+  else if (i==0){
+    ((Transformacion*)Molino->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Molino->getHijos()[2])->getValorRotacion() + gl0);
+    if ( ((Transformacion*)Molino->getHijos()[2])->getValorRotacion() > 360) {
+      ((Transformacion*)Molino->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Molino->getHijos()[2])->getValorRotacion()-360);
+    }
+  }
+  else if (i == 1 && !animacion){
     ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
                                         (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() + 5);
+    if ( ((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() > 360) {
+      ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion()-360);
+    }
+  }
+  else if (i==1){
+    ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() + gl1);
     if ( ((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() > 360) {
       ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
                                         (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion()-360);
@@ -742,20 +765,52 @@ void aumentarGradoLibertad(int i){
 }
 
 void disminuirGradoLibertad(int i){
-  if (i == 0){
+  if (i == 0 && !animacion){
     ((Transformacion*)Molino->getHijos()[2])->setValorRotacion
                                         (((Transformacion*)Molino->getHijos()[2])->getValorRotacion() - 5);
-    if ( ((Transformacion*)Molino->getHijos()[2])->getValorRotacion() < 0) {
+    if (((Transformacion*)Molino->getHijos()[2])->getValorRotacion() < 0) {
       ((Transformacion*)Molino->getHijos()[2])->setValorRotacion
                                         (((Transformacion*)Molino->getHijos()[2])->getValorRotacion()+360);
     }
   }
-  else if (i == 1){
+  else if (i==0){
+    ((Transformacion*)Molino->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Molino->getHijos()[2])->getValorRotacion() - gl0);
+    if (((Transformacion*)Molino->getHijos()[2])->getValorRotacion() < 0) {
+      ((Transformacion*)Molino->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Molino->getHijos()[2])->getValorRotacion()+360);
+    }
+  }
+  else if (i == 1 && !animacion){
     ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
                                         (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() - 5);
-    if ( ((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() < 0) {
+    if (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() < 0) {
       ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
                                         (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion()+360);
     }
   }
+  else if (i==1){
+    ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() - gl1);
+    if (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion() < 0) {
+      ((Transformacion*)Cabeza->getHijos()[2])->setValorRotacion
+                                        (((Transformacion*)Cabeza->getHijos()[2])->getValorRotacion()+360);
+    }
+  }
+}
+
+void aumentarVelocidadGradoLibertad(int i){
+  if (animacion)
+    if (i==0)
+      gl0+=5;
+    else if (i==1)
+      gl1+=5;
+}
+
+void disminuirVelocidadGradoLibertad(int i){
+  if (animacion)
+    if (i==0)
+      gl0-=5;
+    else if (i==1)
+      gl1-=5;
 }

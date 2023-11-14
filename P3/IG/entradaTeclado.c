@@ -52,14 +52,28 @@ void printHelp ()
   printf ("+,-: avanza y retrocede la cámara \n\n");
   printf ("Teclas de movimiento de cursor: giran la camara\n\n");
   // Anyade la informacion de las opciones que introduzcas aqui !!
-  printf ("p: muestra únicamente los vértices de la figura \n\n");
-  printf ("l: muestra únicamente las aristas de la figura \n\n");
-  printf ("f: rellena la figura con color \n\n");
-  printf ("i: cambia el modo de iluminación \n\n");
-  printf ("s: cambia el tipo de sombreado (flat, smooth) \n\n");
+  printf ("p, P: muestra únicamente los vértices de la figura \n\n");
+  printf ("l, L: muestra únicamente las aristas de la figura \n\n");
+  printf ("f, F: rellena la figura con color \n\n");
+  printf ("i, I: cambia el modo de iluminación \n\n");
+  printf ("s, S: cambia el tipo de sombreado (flat, smooth) \n\n");
+  printf ("C: aumenta el primer grado de libertad \n\n");
+  printf ("c: disminuye el primer grado de libertad \n\n");
+  printf ("V: aumenta el segundo grado de libertad \n\n");
+  printf ("v: disminuye el segundo grado de libertad \n\n");
+  printf ("B: aumenta el tercer grado de libertad \n\n");
+  printf ("b: disminuye el tercer grado de libertad \n\n");
+  printf ("A: activa/desactiva la animación \n\n");
+  printf ("G: aumenta la velocidad del primer grado de libertad (solo si está la animacion activada) \n\n");
+  printf ("g: disminuye la velocidad del primer grado de libertad (solo si está la animacion activada)\n\n");
+  printf ("J: aumenta la velocidad del segundo grado de libertad (solo si está la animacion activada)\n\n");
+  printf ("j: disminuye la velocidad del segundo grado de libertad (solo si está la animacion activada)\n\n");
+  printf ("K: aumenta la velocidad del tercer grado de libertad (solo si está la animacion activada)\n\n");
+  printf ("k: disminuye la velocidad del tercer grado de libertad (solo si está la animacion activada)\n\n");
   printf ("\n\n");
   printf (" Uso del programa (parámetros disponibles): \n\n");
   printf ("\t--help -> muestra la ayuda \n\n");
+  printf ("\tSIN ARGUMENTOS -> muestra el modelo jerárquico escogido para la práctica \n\n");
   printf ("\t--spin ruta/a/archivo.ply -> muestra solamente el objeto de revolución creado por el perfil del archivo indicado por argumento. \n\n");
   printf ("\t--load ruta/a/archivo.ply -> muestra solamente el objeto PLY cargado a partir del archivo indicado como argumento. \n\n");
 
@@ -109,18 +123,23 @@ void letra (unsigned char k, int x, int y)
       dCamara += 5.0;
       break;
     case 'p':
+    case 'P':
       setModo (GL_POINT);	// P y p cambian a modo puntos
       break;
     case 'l':
+    case 'L':
       setModo (GL_LINE);	// L y l cambian a modo alambre
       break;
     case 'f':
+    case 'F':
       setModo (GL_FILL);	// F y f cambian a modo relleno
       break;
     case 'i':
+    case 'I':
       setIluminacion ();	// I y i cambian a modo iluminacion
       break;
     case 's':
+    case 'S':
       setSombreado ();		// S y s cambian a modo sombreado
       break;
     case 'C':
@@ -143,6 +162,24 @@ void letra (unsigned char k, int x, int y)
       break;
     case 'A':
       setAnimacion();
+      break;
+    case 'G':
+      aumentarVelocidadGradoLibertad(0);
+      break;
+    case 'g':
+      disminuirVelocidadGradoLibertad(0);
+      break;
+    case 'J':
+      aumentarVelocidadGradoLibertad(1);
+      break;
+    case 'j':
+      disminuirVelocidadGradoLibertad(1);
+      break;
+    case 'K':
+      aumentarVelocidadGradoLibertad(2);
+      break;
+    case 'k':
+      disminuirVelocidadGradoLibertad(2);
       break;
     case 27:			// Escape  Terminar
       exit (0);
