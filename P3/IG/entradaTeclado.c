@@ -141,6 +141,9 @@ void letra (unsigned char k, int x, int y)
     case 'b':
       disminuirGradoLibertad(2);
       break;
+    case 'A':
+      setAnimacion();
+      break;
     case 27:			// Escape  Terminar
       exit (0);
     default:

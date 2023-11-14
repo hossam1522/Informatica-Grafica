@@ -61,6 +61,8 @@ void setIluminacion ();
 **/
 void setSombreado ();
 
+void setAnimacion();
+
 void aumentarGradoLibertad(int i);
 
 void disminuirGradoLibertad(int i);

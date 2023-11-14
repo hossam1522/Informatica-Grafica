@@ -41,6 +41,7 @@ using namespace std;
 int modo = GL_FILL;    // Modo de visualizacion inicial (GL_POINT, GL_LINE, GL_FILL)
 bool iluminacion = false;   // Visualizacion inicial con iluminacion
 bool sombreado = false;   // Visualizacion inicial con sombreado plano (false) y suave (true)
+bool animacion = false;   // Animación inicial desactivada
 int  a_dibujar = 0;     // Objeto a dibujar (0: practica original, 1: superficie, 2: malla)
 MallaVirtual malla;
 SuperficieRevolucion superficie;
@@ -691,6 +692,10 @@ Procedimiento de fondo. Es llamado por glut cuando no hay eventos pendientes.
 **/
 void idle (int v)
 {
+  if (animacion){
+    aumentarGradoLibertad(0);
+    aumentarGradoLibertad(1);
+  }
 
   glutPostRedisplay ();		// Redibuja
   glutTimerFunc (30, idle, 0);	// Vuelve a activarse dentro de 30 ms
@@ -710,6 +715,11 @@ void setIluminacion ()
 void setSombreado ()
 {
   sombreado = !sombreado;
+}
+
+void setAnimacion ()
+{
+  animacion = !animacion;
 }
 
 void aumentarGradoLibertad(int i){
