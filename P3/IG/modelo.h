@@ -91,14 +91,22 @@ void aumentarVelocidadGradoLibertad(int i);
 */
 void disminuirVelocidadGradoLibertad(int i);
 
-class Objeto3D
+class Nodo
 {
-public:
+  protected:
+    std::vector <Nodo*> hijos;
 
-  virtual void draw( ) = 0; // Dibuja el objeto
-} ;
+  public:
 
-class Ejes:public Objeto3D
+  virtual void draw(); // Dibuja el objeto
+
+  void addHijo(Nodo* hijo){hijos.push_back(hijo);}
+
+  std::vector <Nodo*> getHijos(){return hijos;}
+
+};
+
+class Ejes:public Nodo
 {
 	public:
     float longitud = 30;
@@ -106,7 +114,7 @@ class Ejes:public Objeto3D
 	void draw( );
 };
 
-class Cubo : public Objeto3D
+class Cubo : public Nodo
 {
   protected:
 	  float lado, alto, ancho;
@@ -130,7 +138,7 @@ class Cubo : public Objeto3D
   void draw();
 };
 
-class Piramide:public Objeto3D
+class Piramide:public Nodo
 {
   protected:
     float alto, lado;
@@ -146,7 +154,7 @@ class Piramide:public Objeto3D
   void draw();
 };
 
-class Octaedro:public Objeto3D
+class Octaedro:public Nodo
 {
   protected:
     float alto, lado;
@@ -162,7 +170,7 @@ class Octaedro:public Objeto3D
   void draw();
 };
 
-class MallaVirtual:public Objeto3D
+class MallaVirtual:public Nodo
 {
   protected:
     std::vector <float> vertices;
@@ -175,7 +183,7 @@ class MallaVirtual:public Objeto3D
 
   MallaVirtual(std::vector <float> vert, std::vector <int> triang);
 
-  MallaVirtual(const char * nombre_archivo);
+  //MallaVirtual(const char * nombre_archivo);
 
   void draw();
 
@@ -190,6 +198,16 @@ class MallaVirtual:public Objeto3D
   std::vector<float> normalizaVector(std::vector<float> v);
 
   MallaVirtual & operator=(const MallaVirtual & otro);
+
+};
+
+class PLY:public MallaVirtual
+{
+  public:
+
+  PLY(){};
+
+  PLY(const char * nombre_archivo);
 
 };
 
@@ -209,24 +227,7 @@ class SuperficieRevolucion:public MallaVirtual
 
 };
 
-class BarridoLineal:public MallaVirtual
-{
-  protected:
-    std::vector <float> vertices_plano;
-    std::vector <float> direccion;
-    int num_instancias;
-    int altura;
-
-  public:
-
-  BarridoLineal(){};
-
-  BarridoLineal(std::vector <float> vert, std::vector<float> direcc, int num_inst, int alt);
-
-};
-
-
-class Nodo : public Objeto3D
+/* class Nodo : public Nodo
 {
   protected:
     std::vector <Nodo*> hijos;
@@ -241,7 +242,7 @@ class Nodo : public Objeto3D
     void addHijo(Nodo* hijo){hijos.push_back(hijo);}
 
     std::vector <Nodo*> getHijos(){return hijos;}
-};
+}; */
 
 class Transformacion:public Nodo
 {
@@ -269,16 +270,16 @@ class Transformacion:public Nodo
     void setValorTraslacion(std::vector<float> valor){if(tipo==TRASLACION && variable==true)this->valor = valor;}
 };
 
-class Modelo3D:public Nodo
+/* class Modelo3D:public Nodo
 {
   protected:
-    Objeto3D* objeto;
+    Nodo* objeto;
 
   public:
     Modelo3D(){};
 
-    Modelo3D(Objeto3D* objeto){this->objeto = objeto;}
+    Modelo3D(Nodo* objeto){this->objeto = objeto;}
 
     void draw(){objeto->draw();}
 };
-
+ */

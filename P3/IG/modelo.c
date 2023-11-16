@@ -46,13 +46,13 @@ int  a_dibujar = 0;     // Objeto a dibujar (0: practica original, 1: superficie
 float gl0 = 5;   // Grado de libertad 1
 float gl1 = 5;   // Grado de libertad 2
 float gl2 = 0.1;   // Grado de libertad 3
-MallaVirtual malla;
+PLY malla;
 SuperficieRevolucion superficie;
 
 /**************************************************************************************/
 // Práctica como estaba originalmente
-MallaVirtual malla1;
-MallaVirtual malla2;
+PLY malla1;
+PLY malla2;
 SuperficieRevolucion superficie1;
 
 /**
@@ -87,24 +87,25 @@ Transformacion R4(ROTACION, vector<float>()={90, 0, 1, 0}); */
  * @brief Telescopio
  *
  */
-SuperficieRevolucion A1("plys/A.ply", 20);
-SuperficieRevolucion B1("plys/B.ply", 20);
-SuperficieRevolucion C1("plys/C.ply", 20);
-SuperficieRevolucion D1("plys/D.ply", 20);
-SuperficieRevolucion SoporteCabeza1("plys/SoporteCabeza.ply", 20);
-SuperficieRevolucion Pata1("plys/Pata.ply", 20);
-Modelo3D A(&A1);
+SuperficieRevolucion A("plys/A.ply", 20);
+SuperficieRevolucion B("plys/B.ply", 20);
+SuperficieRevolucion C("plys/C.ply", 20);
+SuperficieRevolucion D_("plys/D.ply", 20);
+SuperficieRevolucion SoporteCabeza("plys/SoporteCabeza.ply", 20);
+SuperficieRevolucion P("plys/Pata.ply", 20);
+/* Modelo3D A(&A1);
 Modelo3D B(&B1);
 Modelo3D C(&C1);
 Modelo3D D_(&D1);
 Modelo3D SoporteCabeza(&SoporteCabeza1);
-Modelo3D P(&Pata1);
+Modelo3D P(&Pata1); */
 Nodo *Telescopio = new Nodo();
 Nodo *Cabeza = new Nodo();
 Nodo *Patas = new Nodo();
 Nodo *Pata = new Nodo();
 Nodo *Cuerpo = new Nodo();
 Nodo *Mira = new Nodo();
+
 Transformacion T1(TRASLACION, vector<float>()={0, 4, 0});
 Transformacion T2(TRASLACION, vector<float>()={0, -6, 0});
 Transformacion T3(TRASLACION, vector<float>()={0, 0, 0});
@@ -156,7 +157,7 @@ initModel (int opcion, char * nombre_archivo)
   else if (opcion == 1){
     superficie = SuperficieRevolucion(nombre_archivo, 20);
   } else if (opcion == 2){
-    malla = MallaVirtual(nombre_archivo);
+    malla = PLY(nombre_archivo);
   }
 
   a_dibujar = opcion;
@@ -338,7 +339,7 @@ MallaVirtual::MallaVirtual(vector <float> vert, vector <int> triang)
   normales_vertices = calculoNormalVertices();
 }
 
-MallaVirtual::MallaVirtual(const char * nombre_archivo)
+PLY::PLY(const char * nombre_archivo)
 {
   ply::read(nombre_archivo, vertices, triangulos);
 
@@ -609,49 +610,6 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
 
       triangulos.push_back(k % n);
       triangulos.push_back((k+vertices_ply.size()/3+1) % n);
-      triangulos.push_back((k+1) % n);
-    }
-
-  normales_vertices = calculoNormalVertices();
-}
-
-/**************************************************************************************/
-
-BarridoLineal::BarridoLineal(std::vector <float> vert, vector<float> direcc, int num_inst, int alt){
-  this->vertices_plano = vert;
-  this->direccion = normalizaVector(direcc);
-  this->num_instancias = num_inst;
-  this->altura = alt;
-
-  for (int i=0; i<num_instancias; i++){
-
-    float h = i * altura / (num_instancias-1);
-
-    for (int j=0; j<vertices_plano.size(); j+=3){
-
-      float x = h/direccion[1];
-
-      vertices.push_back(vertices_plano[j]+direccion[0]*x);
-
-      vertices.push_back(vertices_plano[j+1]+h);
-
-      vertices.push_back(vertices_plano[j+2]+direccion[2]*x);
-
-    }
-  }
-
-  int n = vertices_plano.size()/3*(num_instancias-1);
-
-  for (int i=0; i<num_instancias-2; i++)
-    for (int j=0; j<vertices_plano.size()-3; j+=3){
-      int k = i*vertices_plano.size()/3 + j/3;
-
-      triangulos.push_back(k % n);
-      triangulos.push_back((k+vertices_plano.size()/3) % n);
-      triangulos.push_back((k+vertices_plano.size()/3+1) % n);
-
-      triangulos.push_back(k % n);
-      triangulos.push_back((k+vertices_plano.size()/3+1) % n);
       triangulos.push_back((k+1) % n);
     }
 
