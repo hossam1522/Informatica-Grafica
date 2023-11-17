@@ -67,11 +67,6 @@ void setSombreado ();
 void setAnimacion();
 
 /**
- * Devuelve el valor de la animacion
-*/
-bool getAnimacion();
-
-/**
  * Aumenta el grado de libertad número i
 */
 void aumentarGradoLibertad(int i);

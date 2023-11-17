@@ -692,11 +692,6 @@ void setAnimacion ()
   animacion = !animacion;
 }
 
-bool getAnimacion ()
-{
-  return animacion;
-}
-
 void aumentarGradoLibertad(int i){
   if (i == 0 && !animacion){
 
@@ -798,9 +793,9 @@ void aumentarVelocidadGradoLibertad(int i){
   if (animacion)
     if (i==0)
       gl0+=5;
-    else if (i==1)
+    else if (i==1 && gl1<90)
       gl1+=5;
-    else if (i==2)
+    else if (i==2 && gl2<1)
       gl2+=0.1;
 }
 
@@ -808,8 +803,8 @@ void disminuirVelocidadGradoLibertad(int i){
   if (animacion)
     if (i==0)
       gl0-=5;
-    else if (i==1)
+    else if (i==1 && gl1>0)
       gl1-=5;
-    else if (i==2)
+    else if (i==2 && gl2>0.1)
       gl2-=0.1;
 }
