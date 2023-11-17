@@ -183,8 +183,6 @@ class MallaVirtual:public Nodo
 
   MallaVirtual(std::vector <float> vert, std::vector <int> triang);
 
-  //MallaVirtual(const char * nombre_archivo);
-
   void draw();
 
   void draw_smooth();
@@ -227,23 +225,6 @@ class SuperficieRevolucion:public MallaVirtual
 
 };
 
-/* class Nodo : public Nodo
-{
-  protected:
-    std::vector <Nodo*> hijos;
-
-  public:
-    Nodo(){}
-
-    Nodo(std::vector <Nodo*> hijos){this->hijos = hijos;}
-
-    void draw();
-
-    void addHijo(Nodo* hijo){hijos.push_back(hijo);}
-
-    std::vector <Nodo*> getHijos(){return hijos;}
-}; */
-
 class Transformacion:public Nodo
 {
   protected:
@@ -269,17 +250,3 @@ class Transformacion:public Nodo
 
     void setValorTraslacion(std::vector<float> valor){if(tipo==TRASLACION && variable==true)this->valor = valor;}
 };
-
-/* class Modelo3D:public Nodo
-{
-  protected:
-    Nodo* objeto;
-
-  public:
-    Modelo3D(){};
-
-    Modelo3D(Nodo* objeto){this->objeto = objeto;}
-
-    void draw(){objeto->draw();}
-};
- */

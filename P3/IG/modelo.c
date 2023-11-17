@@ -44,45 +44,15 @@ bool sombreado = false;   // Visualizacion inicial con sombreado plano (false) y
 bool animacion = false;   // Animación inicial desactivada
 int  a_dibujar = 0;     // Objeto a dibujar (0: practica original, 1: superficie, 2: malla)
 float gl0 = 5;   // Grado de libertad 1
+bool max0 = false;   // Grado de libertad 1 en su valor máximo
 float gl1 = 5;   // Grado de libertad 2
+bool max1 = false;   // Grado de libertad 2 en su valor máximo
 float gl2 = 0.1;   // Grado de libertad 3
+bool max2 = false;   // Grado de libertad 3 en su valor máximo
 PLY malla;
 SuperficieRevolucion superficie;
 
 /**************************************************************************************/
-// Práctica como estaba originalmente
-PLY malla1;
-PLY malla2;
-SuperficieRevolucion superficie1;
-
-/**
- * @brief Molino
- *
- */
-/*Cubo A1(2, 10, 2);
-Cubo B1(2, 6, 2);
-Cubo C1(2, 6, 1);
-Modelo3D A(&A1);
-Modelo3D B(&B1);
-Modelo3D C(&C1);
-Nodo *Molino = new Nodo();
-Nodo *Cabeza = new Nodo();
-Nodo *B_M = new Nodo();
-Nodo *Aspas = new Nodo();
-Nodo *Aspa = new Nodo();
-Transformacion T1(TRASLACION, vector<float>()={1, 11, 1});
-Transformacion T2(TRASLACION, vector<float>()={3.5, 0, 0});
-Transformacion T3(TRASLACION, vector<float>()={-3, 1, -1});
-Transformacion T4(TRASLACION, vector<float>()={0, -6, 0});
-Transformacion T5(TRASLACION, vector<float>()={-0.5, 0, -1});
-Transformacion Ra(ROTACION, vector<float>()={0, 0, 1, 0}, true);
-Transformacion Rb(ROTACION, vector<float>()={0, 1, 0, 0}, true);
-Transformacion R1(ROTACION, vector<float>()={-90, 0, 0, 1});
-Transformacion R2(ROTACION, vector<float>()={-20, 0, 1, 0});
-Transformacion R3(ROTACION, vector<float>()={40, 0, 1, 0});
-Transformacion R4(ROTACION, vector<float>()={90, 0, 1, 0}); */
-
-
 /**
  * @brief Telescopio
  *
@@ -93,12 +63,7 @@ SuperficieRevolucion C("plys/C.ply", 20);
 SuperficieRevolucion D_("plys/D.ply", 20);
 SuperficieRevolucion SoporteCabeza("plys/SoporteCabeza.ply", 20);
 SuperficieRevolucion P("plys/Pata.ply", 20);
-/* Modelo3D A(&A1);
-Modelo3D B(&B1);
-Modelo3D C(&C1);
-Modelo3D D_(&D1);
-Modelo3D SoporteCabeza(&SoporteCabeza1);
-Modelo3D P(&Pata1); */
+
 Nodo *Telescopio = new Nodo();
 Nodo *Cabeza = new Nodo();
 Nodo *Patas = new Nodo();
@@ -106,16 +71,16 @@ Nodo *Pata = new Nodo();
 Nodo *Cuerpo = new Nodo();
 Nodo *Mira = new Nodo();
 
-Transformacion T1(TRASLACION, vector<float>()={0, 4, 0});
+Transformacion T1(TRASLACION, vector<float>()={0, 3, 0});
 Transformacion T2(TRASLACION, vector<float>()={0, -6, 0});
 Transformacion T3(TRASLACION, vector<float>()={0, 0, 0});
 Transformacion T4(TRASLACION, vector<float>()={0, 0, 0});
 Transformacion T5(TRASLACION, vector<float>()={-4.5, 0, 0});
-Transformacion T6(TRASLACION, vector<float>()={-5, 0, 0});
+Transformacion T6(TRASLACION, vector<float>()={-3, -1, 0});
 Transformacion T7(TRASLACION, vector<float>()={0, -6, 0});
 Transformacion T8(TRASLACION, vector<float>()={0, 14, 0});
 Transformacion T9(TRASLACION, vector<float>()={0, 2, 0});
-Transformacion Ta(TRASLACION, vector<float>()={0, 0, 0});
+Transformacion Ta(TRASLACION, vector<float>()={0, 0, 0}, true);
 Transformacion R1(ROTACION, vector<float>()={120, 0, 1, 0});
 Transformacion R2(ROTACION, vector<float>()={120, 0, 1, 0});
 Transformacion R3(ROTACION, vector<float>()={-37, 0, 0, 1});
@@ -138,12 +103,6 @@ void
 initModel (int opcion, char * nombre_archivo)
 {
   if (opcion == 0){
-    /* B_M->addHijo(&T3);B_M->addHijo(&R1);B_M->addHijo(&B);
-    Aspa->addHijo(&R4);Aspa->addHijo(&T5);Aspa->addHijo(&C);
-    Aspas->addHijo(&R2);Aspas->addHijo(Aspa);Aspas->addHijo(&R3);Aspas->addHijo(&T4);Aspas->addHijo(Aspa);
-    Cabeza->addHijo(B_M);Cabeza->addHijo(&T2);Cabeza->addHijo(&Rb);Cabeza->addHijo(Aspas);
-    Molino->addHijo(&A);Molino->addHijo(&T1);Molino->addHijo(&Ra);Molino->addHijo(Cabeza); */
-
     Pata->addHijo(&T5);Pata->addHijo(&R3);Pata->addHijo(&P);
     Patas->addHijo(&T2);Patas->addHijo(Pata);Patas->addHijo(&T3);Patas->addHijo(&R1);Patas->addHijo(Pata);
     Patas->addHijo(&T4);Patas->addHijo(&R2);Patas->addHijo(Pata);
@@ -347,15 +306,6 @@ PLY::PLY(const char * nombre_archivo)
 }
 
 void MallaVirtual::draw(){
-
-  /* for (int i=0; i<triangulos.size(); i+=3){
-    glBegin(GL_TRIANGLES);
-      glVertex3f(vertices[3*triangulos[i]], vertices[3*triangulos[i]+1], vertices[3*triangulos[i]+2]);
-      glVertex3f(vertices[3*triangulos[i+1]], vertices[3*triangulos[i+1]+1], vertices[3*triangulos[i+1]+2]);
-      glVertex3f(vertices[3*triangulos[i+2]], vertices[3*triangulos[i+2]+1], vertices[3*triangulos[i+2]+2]);
-    glEnd();
-  } */
-
   if (!sombreado)
     draw_flat();
   else
@@ -437,7 +387,6 @@ vector<float> MallaVirtual::calculoNormalCara(vector<float> v1, vector<float> v2
   normal.push_back(a3*b1 - a1*b3);
   normal.push_back(a1*b2 - a2*b1);
 
-  //return normalizaVector(normal);
   return normal;
 
 }
@@ -531,8 +480,6 @@ SuperficieRevolucion::SuperficieRevolucion(vector<float> vert, int num_inst){
 
       if (vertices_ply[j] < 0)
         vertices_ply[j] = -vertices_ply[j];
-      /* else if (vertices_ply[j] > 1.0)
-        vertices_ply[j] /= 10; */
 
       double alpha = 2*M_PI*i/(num_instancias-1);
 
@@ -586,8 +533,6 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
 
       if (vertices_ply[j] < 0)
         vertices_ply[j] = -vertices_ply[j];
-      /* else if (vertices_ply[j] > 1.0)
-        vertices_ply[j] /= 10; */
 
       double alpha = 2*M_PI*i/(num_instancias-1);
 
@@ -690,7 +635,7 @@ void Dibuja (void)
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color5);
 
   if (a_dibujar == 0)
-    Telescopio->draw();//Molino->draw();
+    Telescopio->draw();
   else if (a_dibujar == 1)
     superficie.draw();
   else if (a_dibujar == 2)
@@ -712,8 +657,14 @@ void idle (int v)
 {
   if (animacion){
     aumentarGradoLibertad(0);
-    aumentarGradoLibertad(1);
-    aumentarGradoLibertad(2);
+    if (max1)
+      disminuirGradoLibertad(1);
+    else
+      aumentarGradoLibertad(1);
+    if (max2)
+      disminuirGradoLibertad(2);
+    else
+      aumentarGradoLibertad(2);
   }
 
   glutPostRedisplay ();		// Redibuja
@@ -751,49 +702,47 @@ void aumentarGradoLibertad(int i){
 
     float v = ((Transformacion*)Telescopio->getHijos()[3])->getValorRotacion();
     ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v +5);
-    if (v +5 < 0)
-      ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v +5 +360);
+    if (v +5 > 360)
+      ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v +5 -360);
 
   }
   else if (i==0){
 
     float v = ((Transformacion*)Telescopio->getHijos()[3])->getValorRotacion();
     ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v +gl0);
-    if (v +gl0 < 0)
-      ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v +gl0 +360);
+    if (v +gl0 > 360)
+      ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v +gl0 -360);
 
   }
   else if (i == 1 && !animacion){
 
     float v = ((Transformacion*)Telescopio->getHijos()[4])->getValorRotacion();
-    ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v +5);
-    if (v +5 < 0)
-      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v +5 +360);
+    if (v +5 < 20)
+      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v +5);
 
   }
   else if (i==1){
 
     float v = ((Transformacion*)Telescopio->getHijos()[4])->getValorRotacion();
-    ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v +gl1);
-    if (v +gl1 < 0)
-      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v +gl1 +360);
+    if (v +gl1 < 20)
+      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v +gl1);
+    else
+      max1 = true;
 
   }
   else if (i == 2 && !animacion){
     vector <float> v = ((Transformacion*)Cuerpo->getHijos()[3])->getValorTraslacion();
-    ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]+0.1, v[2]});
-    /* if (((Transformacion*)Cuerpo->getHijos()[3])->getValorRotacion() < 0) {
-      ((Transformacion*)Cuerpo->getHijos()[3])->setValorRotacion
-                                        (((Transformacion*)Cuerpo->getHijos()[3])->getValorRotacion()+360);
-    } */
+    if (v[1]+0.1 < 1.7)
+      ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]+0.1, v[2]});
+
   }
   else if (i==2){
     vector <float> v = ((Transformacion*)Cuerpo->getHijos()[3])->getValorTraslacion();
     ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]+gl2, v[2]});
-    /* if (((Transformacion*)Cuerpo->getHijos()[3])->getValorRotacion() < 0) {
-      ((Transformacion*)Cuerpo->getHijos()[3])->setValorRotacion
-                                        (((Transformacion*)Cuerpo->getHijos()[3])->getValorRotacion()+360);
-    } */
+    if (v[1]+gl2 < 1.7)
+      ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]+gl2, v[2]});
+    else
+      max2 = true;
   }
 }
 
@@ -817,34 +766,31 @@ void disminuirGradoLibertad(int i){
   else if (i == 1 && !animacion){
 
     float v = ((Transformacion*)Telescopio->getHijos()[4])->getValorRotacion();
-    ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v -5);
-    if (v -5 < 0)
-      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v -5 +360);
+    if (v -5 > -70)
+      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v -5);
 
   }
   else if (i==1){
 
     float v = ((Transformacion*)Telescopio->getHijos()[4])->getValorRotacion();
-    ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v -gl1);
-    if (v -gl1 < 0)
-      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v -gl1 +360);
+    if (v -gl1 > -70)
+      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v -gl1);
+    else
+      max1 = false;
 
   }
   else if (i == 2 && !animacion){
     vector <float> v = ((Transformacion*)Cuerpo->getHijos()[3])->getValorTraslacion();
-    ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]-0.1, v[2]});
-    /* if (((Transformacion*)Cuerpo->getHijos()[3])->getValorRotacion() < 0) {
-      ((Transformacion*)Cuerpo->getHijos()[3])->setValorRotacion
-                                        (((Transformacion*)Cuerpo->getHijos()[3])->getValorRotacion()+360);
-    } */
+    if (v[1]-0.1 > -1.3)
+      ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]-0.1, v[2]});
+
   }
   else if (i==2){
     vector <float> v = ((Transformacion*)Cuerpo->getHijos()[3])->getValorTraslacion();
-    ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]-gl2, v[2]});
-    /* if (((Transformacion*)Cuerpo->getHijos()[3])->getValorRotacion() < 0) {
-      ((Transformacion*)Cuerpo->getHijos()[3])->setValorRotacion
-                                        (((Transformacion*)Cuerpo->getHijos()[3])->getValorRotacion()+360);
-    } */
+    if (v[1]-gl2 > -1.3)
+      ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]-gl2, v[2]});
+    else
+      max2 = false;
   }
 }
 
