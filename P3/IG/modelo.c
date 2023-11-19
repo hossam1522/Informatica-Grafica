@@ -73,13 +73,11 @@ Nodo *Mira = new Nodo();
 
 Transformacion T1(TRASLACION, vector<float>()={0, 3, 0});
 Transformacion T2(TRASLACION, vector<float>()={0, -6, 0});
-Transformacion T3(TRASLACION, vector<float>()={0, 0, 0});
-Transformacion T4(TRASLACION, vector<float>()={0, 0, 0});
-Transformacion T5(TRASLACION, vector<float>()={-4.5, 0, 0});
-Transformacion T6(TRASLACION, vector<float>()={-3, -1, 0});
-Transformacion T7(TRASLACION, vector<float>()={0, -6, 0});
-Transformacion T8(TRASLACION, vector<float>()={0, 14, 0});
-Transformacion T9(TRASLACION, vector<float>()={0, 2, 0});
+Transformacion T3(TRASLACION, vector<float>()={-4.5, 0, 0});
+Transformacion T4(TRASLACION, vector<float>()={-3, -1, 0});
+Transformacion T5(TRASLACION, vector<float>()={0, -6, 0});
+Transformacion T6(TRASLACION, vector<float>()={0, 14, 0});
+Transformacion T7(TRASLACION, vector<float>()={0, 2, 0});
 Transformacion Ta(TRASLACION, vector<float>()={0, 0, 0}, true);
 Transformacion R1(ROTACION, vector<float>()={120, 0, 1, 0});
 Transformacion R2(ROTACION, vector<float>()={120, 0, 1, 0});
@@ -103,13 +101,13 @@ void
 initModel (int opcion, char * nombre_archivo)
 {
   if (opcion == 0){
-    Pata->addHijo(&T5);Pata->addHijo(&R3);Pata->addHijo(&P);
-    Patas->addHijo(&T2);Patas->addHijo(Pata);Patas->addHijo(&T3);Patas->addHijo(&R1);Patas->addHijo(Pata);
-    Patas->addHijo(&T4);Patas->addHijo(&R2);Patas->addHijo(Pata);
-    Cuerpo->addHijo(&B);Cuerpo->addHijo(&T7);Cuerpo->addHijo(&C);Cuerpo->addHijo(&Ta);
-    Cuerpo->addHijo(&T8);Cuerpo->addHijo(&A);
-    Mira->addHijo(&D_);Mira->addHijo(&T9);Mira->addHijo(&R6);Mira->addHijo(&D_);
-    Cabeza->addHijo(&R4);Cabeza->addHijo(Cuerpo);Cabeza->addHijo(&T6);Cabeza->addHijo(&R5);Cabeza->addHijo(Mira);
+    Pata->addHijo(&T3);Pata->addHijo(&R3);Pata->addHijo(&P);
+    Patas->addHijo(&T2);Patas->addHijo(Pata);Patas->addHijo(&R1);Patas->addHijo(Pata); Patas->addHijo(&R2);
+    Patas->addHijo(Pata);
+    Cuerpo->addHijo(&B);Cuerpo->addHijo(&T5);Cuerpo->addHijo(&C);Cuerpo->addHijo(&Ta);
+    Cuerpo->addHijo(&T6);Cuerpo->addHijo(&A);
+    Mira->addHijo(&D_);Mira->addHijo(&T7);Mira->addHijo(&R6);Mira->addHijo(&D_);
+    Cabeza->addHijo(&R4);Cabeza->addHijo(Cuerpo);Cabeza->addHijo(&T4);Cabeza->addHijo(&R5);Cabeza->addHijo(Mira);
     Telescopio->addHijo(Patas);Telescopio->addHijo(&SoporteCabeza);Telescopio->addHijo(&T1);
     Telescopio->addHijo(&Ra);Telescopio->addHijo(&Rb);Telescopio->addHijo(Cabeza);
   }
