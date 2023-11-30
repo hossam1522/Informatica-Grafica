@@ -90,9 +90,9 @@ class Nodo
 {
   protected:
     std::vector <Nodo*> hijos;
-    GLuint texId;
     unsigned char * texImagen;
     unsigned int texAncho, texAlto;
+    bool textura = false;
 
   public:
 

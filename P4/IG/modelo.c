@@ -52,6 +52,7 @@ float gl2 = 0.1;   // Grado de libertad 3
 bool max2 = false;   // Grado de libertad 3 en su valor máximo
 PLY malla;
 SuperficieRevolucion superficie;
+GLuint texId;
 Cubo dado(3, 3, 3);
 
 /**************************************************************************************/
@@ -103,7 +104,7 @@ void
 initModel (int opcion, char * nombre_archivo)
 {
   if (opcion == 0){
-    cubo.asignarTextura("jpgs/dado.jpg");
+    dado.asignarTextura("jpgs/dado.jpg");
   }
   else if (opcion == 1){
     superficie = SuperficieRevolucion(nombre_archivo, 20);
@@ -144,6 +145,16 @@ Ejes ejesCoordenadas;
 
 void Cubo::draw()
 {
+  if (textura){
+    glGenTextures(1, &texId);
+    glBindTexture(GL_TEXTURE_2D, texId);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,texAncho,texAlto,0,GL_RGB,GL_UNSIGNED_BYTE,texImagen);
+  }
+
   glBegin(GL_QUADS);
     // right
     glNormal3f(1.0f, 0.0f, 0.0f);
@@ -165,24 +176,34 @@ void Cubo::draw()
 
     // front
     glNormal3f(0.0f, 0.0f, 1.0f);
+    if (textura) glTexCoord2f( 0.5, 0.75);
     glVertex3f(lado, alto, ancho);
+    if (textura) glTexCoord2f( 0.5, 0.5);
     glVertex3f(0, alto, ancho);
+    if (textura) glTexCoord2f( 0.75, 0.75);
     glVertex3f(lado, 0, ancho);
+    if (textura) glTexCoord2f( 0.75, 0.5);
     glVertex3f(0, 0, ancho);
 
     // bottom
     glNormal3f(0.0f, -1.0f, 0.0f);
+    if (textura) glTexCoord2f( 1, 0.75);
     glVertex3f(lado, 0, 0);
+    if (textura) glTexCoord2f( 1, 0.5);
     glVertex3f(0, 0, 0);
 
     // back
     glNormal3f(0.0f, 0.0f, -1.0f);
+    if (textura) glTexCoord2f( 0.25, 0.75);
     glVertex3f(lado, alto, 0);
+    if (textura) glTexCoord2f( 0.25, 0.5);
     glVertex3f(0, alto, 0);
 
     // top
     glNormal3f(0.0f, 1.0f, 0.0f);
+    //if (textura) glTexCoord2f( 1, 0.5);
     glVertex3f(lado, alto, ancho);
+    //if (textura) glTexCoord2f( 1, 0.5);
     glVertex3f(0, alto, ancho);
 
   glEnd();
@@ -578,6 +599,7 @@ void Transformacion :: draw(){
 
 void Nodo::asignarTextura(const char * nombre_archivo){
   texImagen = LeerArchivoJPEG(nombre_archivo, texAncho, texAlto);
+  textura = true;
 }
 
 /**************************************************************************************/
@@ -633,7 +655,10 @@ void Dibuja (void)
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color5);
 
   if (a_dibujar == 0){
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texId);
     dado.draw();
+    glDisable(GL_TEXTURE_2D);
   }
   else if (a_dibujar == 1)
     superficie.draw();
