@@ -90,6 +90,9 @@ class Nodo
 {
   protected:
     std::vector <Nodo*> hijos;
+    GLuint texId;
+    unsigned char * texImagen;
+    unsigned int texAncho, texAlto;
 
   public:
 
@@ -98,6 +101,8 @@ class Nodo
   void addHijo(Nodo* hijo){hijos.push_back(hijo);}
 
   std::vector <Nodo*> getHijos(){return hijos;}
+
+  void asignarTextura (const char * nombre_archivo);
 
 };
 

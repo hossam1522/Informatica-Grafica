@@ -35,6 +35,7 @@ modulo modelo.c
 #include <math.h>
 #include <GL/glut.h>		// Libreria de utilidades de OpenGL
 #include "practicasIG.h"
+#include "lector-jpg.h"
 
 using namespace std;
 
@@ -51,13 +52,14 @@ float gl2 = 0.1;   // Grado de libertad 3
 bool max2 = false;   // Grado de libertad 3 en su valor máximo
 PLY malla;
 SuperficieRevolucion superficie;
+Cubo dado(3, 3, 3);
 
 /**************************************************************************************/
 /**
  * @brief Telescopio
  *
  */
-SuperficieRevolucion A("plys/A.ply", 20);
+/* SuperficieRevolucion A("plys/A.ply", 20);
 SuperficieRevolucion B("plys/B.ply", 20);
 SuperficieRevolucion C("plys/C.ply", 20);
 SuperficieRevolucion D_("plys/D.ply", 20);
@@ -86,7 +88,7 @@ Transformacion R4(ROTACION, vector<float>()={-60, 0, 0, 1});
 Transformacion R5(ROTACION, vector<float>()={90, 0, 0, 1});
 Transformacion R6(ROTACION, vector<float>()={90, 0, 0, 1});
 Transformacion Ra(ROTACION, vector<float>()={0, 0, 1, 0}, true);
-Transformacion Rb(ROTACION, vector<float>()={0, 0, 0, 1}, true);
+Transformacion Rb(ROTACION, vector<float>()={0, 0, 0, 1}, true); */
 
 /**************************************************************************************/
 
@@ -101,15 +103,7 @@ void
 initModel (int opcion, char * nombre_archivo)
 {
   if (opcion == 0){
-    Pata->addHijo(&T3);Pata->addHijo(&R3);Pata->addHijo(&P);
-    Patas->addHijo(&T2);Patas->addHijo(Pata);Patas->addHijo(&R1);Patas->addHijo(Pata); Patas->addHijo(&R2);
-    Patas->addHijo(Pata);
-    Cuerpo->addHijo(&B);Cuerpo->addHijo(&T5);Cuerpo->addHijo(&C);Cuerpo->addHijo(&Ta);
-    Cuerpo->addHijo(&T6);Cuerpo->addHijo(&A);
-    Mira->addHijo(&D_);Mira->addHijo(&T7);Mira->addHijo(&R6);Mira->addHijo(&D_);
-    Cabeza->addHijo(&R4);Cabeza->addHijo(Cuerpo);Cabeza->addHijo(&T4);Cabeza->addHijo(&R5);Cabeza->addHijo(Mira);
-    Telescopio->addHijo(Patas);Telescopio->addHijo(&SoporteCabeza);Telescopio->addHijo(&T1);
-    Telescopio->addHijo(&Ra);Telescopio->addHijo(&Rb);Telescopio->addHijo(Cabeza);
+    cubo.asignarTextura("jpgs/dado.jpg");
   }
   else if (opcion == 1){
     superficie = SuperficieRevolucion(nombre_archivo, 20);
@@ -582,6 +576,12 @@ void Transformacion :: draw(){
 
 /**************************************************************************************/
 
+void Nodo::asignarTextura(const char * nombre_archivo){
+  texImagen = LeerArchivoJPEG(nombre_archivo, texAncho, texAlto);
+}
+
+/**************************************************************************************/
+
 /**	void Dibuja( void )
 
 Procedimiento de dibujo del modelo. Es llamado por glut cada vez que se debe redibujar.
@@ -632,8 +632,9 @@ void Dibuja (void)
   glColor3f(0.5, 0.5, 0.5);
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color5);
 
-  if (a_dibujar == 0)
-    Telescopio->draw();
+  if (a_dibujar == 0){
+    dado.draw();
+  }
   else if (a_dibujar == 1)
     superficie.draw();
   else if (a_dibujar == 2)
@@ -691,7 +692,7 @@ void setAnimacion ()
 }
 
 void aumentarGradoLibertad(int i){
-  if (i == 0 && !animacion){
+  /* if (i == 0 && !animacion){
 
     float v = ((Transformacion*)Telescopio->getHijos()[3])->getValorRotacion();
     ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v +5);
@@ -736,11 +737,11 @@ void aumentarGradoLibertad(int i){
       ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]+gl2, v[2]});
     else
       max2 = true;
-  }
+  } */
 }
 
 void disminuirGradoLibertad(int i){
-  if (i == 0 && !animacion){
+  /* if (i == 0 && !animacion){
 
     float v = ((Transformacion*)Telescopio->getHijos()[3])->getValorRotacion();
     ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v -5);
@@ -784,7 +785,7 @@ void disminuirGradoLibertad(int i){
       ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]-gl2, v[2]});
     else
       max2 = false;
-  }
+  } */
 }
 
 void aumentarVelocidadGradoLibertad(int i){

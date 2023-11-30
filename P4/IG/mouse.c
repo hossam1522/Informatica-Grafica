@@ -1,13 +1,13 @@
 /*	Prácticas de Informática Gráfica
 
 	Grupo C					Curso 2022-23
- 	
+
 	Codigo base para la realización de las practicas de IG
-	
-	Estudiante: 
+
+	Estudiante:
 
 =======================================================
-	G. Arroyo, J.C. Torres 
+	G. Arroyo, J.C. Torres
 	Dpto. Lenguajes y Sistemas Informticos
 	(Univ. de Granada)
 
@@ -19,7 +19,7 @@
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details 
+ GNU General Public License for more details
  http://www.gnu.org/copyleft/gpl.html
 
 =======================================================/
