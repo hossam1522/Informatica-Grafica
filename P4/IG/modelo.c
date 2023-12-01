@@ -145,29 +145,27 @@ Ejes ejesCoordenadas;
 
 void Cubo::draw()
 {
-  if (textura){
-    glGenTextures(1, &texId);
-    glBindTexture(GL_TEXTURE_2D, texId);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,texAncho,texAlto,0,GL_RGB,GL_UNSIGNED_BYTE,texImagen);
-  }
-
-  glBegin(GL_QUADS);
-    // right
+  /* glBegin(GL_QUADS);
+    // left
     glNormal3f(1.0f, 0.0f, 0.0f);
+    if (textura) glTexCoord2f( 0.75, 0.25);
     glVertex3f(lado, 0, 0);
+    if (textura) glTexCoord2f( 0.5, 0.25);
     glVertex3f(lado, alto, 0);
+    if (textura) glTexCoord2f( 0.5, 0.5);
     glVertex3f(lado, alto, ancho);
+    if (textura) glTexCoord2f( 0.75, 0.5);
     glVertex3f(lado,0, ancho);
 
-    // left
+    // right
     glNormal3f(-1.0f, 0.0f, 0.0f);
+    if (textura) glTexCoord2f( 0.75, 1.00);
     glVertex3f(0, 0, 0);
+    if (textura) glTexCoord2f( 0.75, 0.75);
     glVertex3f(0, 0, ancho);
+    if (textura) glTexCoord2f( 0.5, 0.75);
     glVertex3f(0, alto, ancho);
+    if (textura) glTexCoord2f( 0.5, 1.0);
     glVertex3f(0, alto, 0);
 
   glEnd();
@@ -188,8 +186,10 @@ void Cubo::draw()
     // bottom
     glNormal3f(0.0f, -1.0f, 0.0f);
     if (textura) glTexCoord2f( 1, 0.75);
+    //if (textura) glTexCoord2f( 0, 0.75);
     glVertex3f(lado, 0, 0);
     if (textura) glTexCoord2f( 1, 0.5);
+    //if (textura) glTexCoord2f( 0, 0.5);
     glVertex3f(0, 0, 0);
 
     // back
@@ -201,12 +201,82 @@ void Cubo::draw()
 
     // top
     glNormal3f(0.0f, 1.0f, 0.0f);
-    //if (textura) glTexCoord2f( 1, 0.5);
+    if (textura) glTexCoord2f( 0.5, 0.75);
     glVertex3f(lado, alto, ancho);
-    //if (textura) glTexCoord2f( 1, 0.5);
+    if (textura) glTexCoord2f( 0.5, 0.5);
     glVertex3f(0, alto, ancho);
 
+  glEnd(); */
+
+  glBegin(GL_QUADS);
+    // left
+    glNormal3f(1.0f, 0.0f, 0.0f);
+    if (textura) glTexCoord2f( 0.75, 0.25);
+    glVertex3f(lado, 0, 0);
+    if (textura) glTexCoord2f( 0.5, 0.25);
+    glVertex3f(lado, alto, 0);
+    if (textura) glTexCoord2f( 0.5, 0.5);
+    glVertex3f(lado, alto, ancho);
+    if (textura) glTexCoord2f( 0.75, 0.5);
+    glVertex3f(lado,0, ancho);
+
+    // right
+    glNormal3f(-1.0f, 0.0f, 0.0f);
+    if (textura) glTexCoord2f( 0.75, 1.00);
+    glVertex3f(0, 0, 0);
+    if (textura) glTexCoord2f( 0.75, 0.75);
+    glVertex3f(0, 0, ancho);
+    if (textura) glTexCoord2f( 0.5, 0.75);
+    glVertex3f(0, alto, ancho);
+    if (textura) glTexCoord2f( 0.5, 1.0);
+    glVertex3f(0, alto, 0);
+
+    // front
+    glNormal3f(0.0f, 0.0f, 1.0f);
+    if (textura) glTexCoord2f( 0.5, 0.75);
+    glVertex3f(lado, alto, ancho);
+    if (textura) glTexCoord2f( 0.5, 0.5);
+    glVertex3f(0, alto, ancho);
+    if (textura) glTexCoord2f( 0.75, 0.5);
+    glVertex3f(0, 0, ancho);
+    if (textura) glTexCoord2f( 0.75, 0.75);
+    glVertex3f(lado, 0, ancho);
+
+    // bottom
+    glNormal3f(0.0f, -1.0f, 0.0f);
+    if (textura) glTexCoord2f( 0.75, 0.75);
+    glVertex3f(lado, 0, ancho);
+    if (textura) glTexCoord2f( 0.75, 0.5);
+    glVertex3f(0, 0, ancho);
+    if (textura) glTexCoord2f( 1, 0.5);
+    glVertex3f(0, 0, 0);
+    if (textura) glTexCoord2f( 1, 0.75);
+    glVertex3f(lado, 0, 0);
+
+    // back
+    glNormal3f(0.0f, 0.0f, -1.0f);
+    if (textura) glTexCoord2f( 0.25, 0.5);
+    glVertex3f(0, alto, 0);
+    if (textura) glTexCoord2f( 0.25, 0.75);
+    glVertex3f(lado, alto, 0);
+    if (textura) glTexCoord2f( 0, 0.75);
+    glVertex3f(lado, 0, 0);
+    if (textura) glTexCoord2f( 0, 0.5);
+    glVertex3f(0, 0, 0);
+
+    // top
+    glNormal3f(0.0f, 1.0f, 0.0f);
+    if (textura) glTexCoord2f( 0.25, 0.75);
+    glVertex3f(lado, alto, 0);
+    if (textura) glTexCoord2f( 0.25, 0.5);
+    glVertex3f(0, alto, 0);
+    if (textura) glTexCoord2f( 0.5, 0.5);
+    glVertex3f(0, alto, ancho);
+    if (textura) glTexCoord2f( 0.5, 0.75);
+    glVertex3f(lado, alto, ancho);
+
   glEnd();
+
 
 }
 
@@ -600,6 +670,13 @@ void Transformacion :: draw(){
 void Nodo::asignarTextura(const char * nombre_archivo){
   texImagen = LeerArchivoJPEG(nombre_archivo, texAncho, texAlto);
   textura = true;
+  glGenTextures(1, &texId);
+  glBindTexture(GL_TEXTURE_2D, texId);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,texAncho,texAlto,0,GL_RGB,GL_UNSIGNED_BYTE,texImagen);
 }
 
 /**************************************************************************************/
