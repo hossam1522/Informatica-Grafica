@@ -90,6 +90,7 @@ class Nodo
 {
   protected:
     std::vector <Nodo*> hijos;
+    GLuint texId;
     unsigned char * texImagen;
     unsigned int texAncho, texAlto;
     bool textura = false;
@@ -103,6 +104,8 @@ class Nodo
   std::vector <Nodo*> getHijos(){return hijos;}
 
   void asignarTextura (const char * nombre_archivo);
+
+  GLuint getTexId(){return texId;}
 
 };
 

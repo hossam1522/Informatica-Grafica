@@ -52,7 +52,6 @@ float gl2 = 0.1;   // Grado de libertad 3
 bool max2 = false;   // Grado de libertad 3 en su valor máximo
 PLY malla;
 SuperficieRevolucion superficie;
-GLuint texId;
 Cubo dado(3, 3, 3);
 
 /**************************************************************************************/
@@ -145,69 +144,6 @@ Ejes ejesCoordenadas;
 
 void Cubo::draw()
 {
-  /* glBegin(GL_QUADS);
-    // left
-    glNormal3f(1.0f, 0.0f, 0.0f);
-    if (textura) glTexCoord2f( 0.75, 0.25);
-    glVertex3f(lado, 0, 0);
-    if (textura) glTexCoord2f( 0.5, 0.25);
-    glVertex3f(lado, alto, 0);
-    if (textura) glTexCoord2f( 0.5, 0.5);
-    glVertex3f(lado, alto, ancho);
-    if (textura) glTexCoord2f( 0.75, 0.5);
-    glVertex3f(lado,0, ancho);
-
-    // right
-    glNormal3f(-1.0f, 0.0f, 0.0f);
-    if (textura) glTexCoord2f( 0.75, 1.00);
-    glVertex3f(0, 0, 0);
-    if (textura) glTexCoord2f( 0.75, 0.75);
-    glVertex3f(0, 0, ancho);
-    if (textura) glTexCoord2f( 0.5, 0.75);
-    glVertex3f(0, alto, ancho);
-    if (textura) glTexCoord2f( 0.5, 1.0);
-    glVertex3f(0, alto, 0);
-
-  glEnd();
-
-  glBegin(GL_QUAD_STRIP);
-
-    // front
-    glNormal3f(0.0f, 0.0f, 1.0f);
-    if (textura) glTexCoord2f( 0.5, 0.75);
-    glVertex3f(lado, alto, ancho);
-    if (textura) glTexCoord2f( 0.5, 0.5);
-    glVertex3f(0, alto, ancho);
-    if (textura) glTexCoord2f( 0.75, 0.75);
-    glVertex3f(lado, 0, ancho);
-    if (textura) glTexCoord2f( 0.75, 0.5);
-    glVertex3f(0, 0, ancho);
-
-    // bottom
-    glNormal3f(0.0f, -1.0f, 0.0f);
-    if (textura) glTexCoord2f( 1, 0.75);
-    //if (textura) glTexCoord2f( 0, 0.75);
-    glVertex3f(lado, 0, 0);
-    if (textura) glTexCoord2f( 1, 0.5);
-    //if (textura) glTexCoord2f( 0, 0.5);
-    glVertex3f(0, 0, 0);
-
-    // back
-    glNormal3f(0.0f, 0.0f, -1.0f);
-    if (textura) glTexCoord2f( 0.25, 0.75);
-    glVertex3f(lado, alto, 0);
-    if (textura) glTexCoord2f( 0.25, 0.5);
-    glVertex3f(0, alto, 0);
-
-    // top
-    glNormal3f(0.0f, 1.0f, 0.0f);
-    if (textura) glTexCoord2f( 0.5, 0.75);
-    glVertex3f(lado, alto, ancho);
-    if (textura) glTexCoord2f( 0.5, 0.5);
-    glVertex3f(0, alto, ancho);
-
-  glEnd(); */
-
   glBegin(GL_QUADS);
     // left
     glNormal3f(1.0f, 0.0f, 0.0f);
@@ -733,7 +669,7 @@ void Dibuja (void)
 
   if (a_dibujar == 0){
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texId);
+    glBindTexture(GL_TEXTURE_2D, dado.getTexId());
     dado.draw();
     glDisable(GL_TEXTURE_2D);
   }
