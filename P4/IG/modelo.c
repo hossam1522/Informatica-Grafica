@@ -337,10 +337,13 @@ void MallaVirtual::draw_smooth(){
   for (int i=0; i<triangulos.size(); i+=3){
     glBegin(GL_TRIANGLES);
       glNormal3f(normales_vertices[3*triangulos[i]], normales_vertices[3*triangulos[i]+1], normales_vertices[3*triangulos[i]+2]);
+      if (textura) glTexCoord2f( coordenadas_textura[2*triangulos[i]], coordenadas_textura[2*triangulos[i]+1]);
       glVertex3f(vertices[3*triangulos[i]], vertices[3*triangulos[i]+1], vertices[3*triangulos[i]+2]);
       glNormal3f(normales_vertices[3*triangulos[i+1]], normales_vertices[3*triangulos[i+1]+1], normales_vertices[3*triangulos[i+1]+2]);
+      if (textura) glTexCoord2f( coordenadas_textura[2*triangulos[i+1]], coordenadas_textura[2*triangulos[i+1]+1]);
       glVertex3f(vertices[3*triangulos[i+1]], vertices[3*triangulos[i+1]+1], vertices[3*triangulos[i+1]+2]);
       glNormal3f(normales_vertices[3*triangulos[i+2]], normales_vertices[3*triangulos[i+2]+1], normales_vertices[3*triangulos[i+2]+2]);
+      if (textura) glTexCoord2f( coordenadas_textura[2*triangulos[i+2]], coordenadas_textura[2*triangulos[i+2]+1]);
       glVertex3f(vertices[3*triangulos[i+2]], vertices[3*triangulos[i+2]+1], vertices[3*triangulos[i+2]+2]);
     glEnd();
   }
@@ -370,8 +373,11 @@ void MallaVirtual::draw_flat(){
 
     glBegin(GL_TRIANGLES);
       glNormal3f(normal[0], normal[1], normal[2]);
+      if (textura) glTexCoord2f( coordenadas_textura[2*triangulos[i]], coordenadas_textura[2*triangulos[i]+1]);
       glVertex3f(vertices[3*triangulos[i]], vertices[3*triangulos[i]+1], vertices[3*triangulos[i]+2]);
+      if (textura) glTexCoord2f( coordenadas_textura[2*triangulos[i+1]], coordenadas_textura[2*triangulos[i+1]+1]);
       glVertex3f(vertices[3*triangulos[i+1]], vertices[3*triangulos[i+1]+1], vertices[3*triangulos[i+1]+2]);
+      if (textura) glTexCoord2f( coordenadas_textura[2*triangulos[i+2]], coordenadas_textura[2*triangulos[i+2]+1]);
       glVertex3f(vertices[3*triangulos[i+2]], vertices[3*triangulos[i+2]+1], vertices[3*triangulos[i+2]+2]);
     glEnd();
   }
@@ -578,6 +584,56 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
     }
 
   normales_vertices = calculoNormalVertices();
+}
+
+void SuperficieRevolucion::calcularCoordenadasTextura(){
+
+  float d[vertices.size()/3];
+  d[0] = 0;
+
+  for (int i=1; i<vertices.size()/3; i++)
+    d[i] = d[i-1] + sqrt((vertices[3*i]-vertices[3*(i-1)])*(vertices[3*i]-vertices[3*(i-1)]) +
+                         (vertices[3*i+1]-vertices[3*(i-1)+1])*(vertices[3*i+1]-vertices[3*(i-1)+1]) +
+                         (vertices[3*i+2]-vertices[3*(i-1)+2])*(vertices[3*i+2]-vertices[3*(i-1)+2]));
+
+  for (int i=0; i<num_instancias; i++){
+    float u = i/(num_instancias-1);
+    for (int j=0; j<vertices.size()/3; j++){
+      float v = d[j]/d[vertices.size()/3-1];
+
+      coordenadas_textura.push_back(u);
+      coordenadas_textura.push_back(v);
+    }
+  }
+
+  /* double Model_Revolution::distancia(_vertex3f a, _vertex3f b)
+{
+    double x = pow((b.x-a.x), 2);
+    double y = pow((b.y-a.y), 2);
+    double z = pow((b.z-a.z), 2);
+
+    return sqrt((double)(x+y+z));
+} */
+
+  /* int n_vertices = _vertices.size();
+
+    double d[M];    //vector de distancias
+    d[0] = 0;
+
+    for(unsigned int k=1; k<M; k++)
+        d[k] = d[k-1] + distancia(_vertices[k-1], _vertices[k]);
+
+    for(unsigned int i=0; i<=N; i++)
+    {
+        float si = (float)i/(N-1);
+        for(unsigned int j=0; j<M; j++)
+        {
+            float tj = d[j]/d[M-1];
+
+            _texturas.push_back(_vertex2f(si, tj));
+
+        }
+    } */
 }
 
 /**************************************************************************************/

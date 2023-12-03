@@ -90,7 +90,7 @@ class Nodo
 {
   protected:
     std::vector <Nodo*> hijos;
-    GLuint texId;
+    GLuint texId=0;
     unsigned char * texImagen;
     unsigned int texAncho, texAlto;
     bool textura = false;
@@ -179,6 +179,7 @@ class MallaVirtual:public Nodo
     std::vector <float> vertices;
     std::vector <int> triangulos;
     std::vector <float> normales_vertices;
+    std::vector <float> coordenadas_textura;
 
   public:
 
@@ -225,6 +226,8 @@ class SuperficieRevolucion:public MallaVirtual
   SuperficieRevolucion(std::vector <float> vert, int num_inst);
 
   SuperficieRevolucion(const char * nombre_archivo, int num_inst);
+
+  void calcularCoordenadasTextura();
 
 };
 
