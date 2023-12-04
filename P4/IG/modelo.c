@@ -53,6 +53,7 @@ bool max2 = false;   // Grado de libertad 3 en su valor máximo
 PLY malla;
 SuperficieRevolucion superficie;
 Cubo dado(3, 3, 3);
+SuperficieRevolucion lata("plys/lata-pcue.ply", 20);
 
 /**************************************************************************************/
 /**
@@ -104,6 +105,8 @@ initModel (int opcion, char * nombre_archivo)
 {
   if (opcion == 0){
     dado.asignarTextura("jpgs/dado.jpg");
+    lata.asignarTextura("jpgs/text-lata-1.jpg");
+    lata.calcularCoordenadasTextura();
   }
   else if (opcion == 1){
     superficie = SuperficieRevolucion(nombre_archivo, 20);
@@ -480,24 +483,26 @@ MallaVirtual& MallaVirtual::operator=(const MallaVirtual &m){
 
 /**************************************************************************************/
 
-SuperficieRevolucion::SuperficieRevolucion(vector<float> vert, int num_inst){
+SuperficieRevolucion::SuperficieRevolucion(vector<float> vert, int num_inst, bool tapa){
   this->vertices_ply = vert;
   this->num_instancias = num_inst;
 
-  if (vertices_ply[0] !=0 || vertices_ply[2]!=0){
-    float h = vertices_ply[1];
+  if (tapa){
+    if (vertices_ply[0] !=0 || vertices_ply[2]!=0){
+      float h = vertices_ply[1];
 
-    vertices_ply.insert(vertices_ply.begin(), 0);
-    vertices_ply.insert(vertices_ply.begin()+1, h);
-    vertices_ply.insert(vertices_ply.begin()+2, 0);
-  }
+      vertices_ply.insert(vertices_ply.begin(), 0);
+      vertices_ply.insert(vertices_ply.begin()+1, h);
+      vertices_ply.insert(vertices_ply.begin()+2, 0);
+    }
 
-  if (vertices_ply[vertices_ply.size()-3] !=0 || vertices_ply[vertices_ply.size()-1]!=0){
-    float h = vertices_ply[vertices_ply.size()-2];
+    if (vertices_ply[vertices_ply.size()-3] !=0 || vertices_ply[vertices_ply.size()-1]!=0){
+      float h = vertices_ply[vertices_ply.size()-2];
 
-    vertices_ply.push_back(0);
-    vertices_ply.push_back(h);
-    vertices_ply.push_back(0);
+      vertices_ply.push_back(0);
+      vertices_ply.push_back(h);
+      vertices_ply.push_back(0);
+    }
   }
 
   for (int i=0; i<num_instancias; i++)
@@ -533,24 +538,26 @@ SuperficieRevolucion::SuperficieRevolucion(vector<float> vert, int num_inst){
   normales_vertices = calculoNormalVertices();
 }
 
-SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_inst){
+SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_inst, bool tapa){
   ply::read_vertices(nombre_archivo, vertices_ply);
   this->num_instancias = num_inst;
 
-  if (vertices_ply[0] !=0 || vertices_ply[2]!=0){
-    float h = vertices_ply[1];
+  if (tapa){
+    if (vertices_ply[0] !=0 || vertices_ply[2]!=0){
+      float h = vertices_ply[1];
 
-    vertices_ply.insert(vertices_ply.begin(), 0);
-    vertices_ply.insert(vertices_ply.begin()+1, h);
-    vertices_ply.insert(vertices_ply.begin()+2, 0);
-  }
+      vertices_ply.insert(vertices_ply.begin(), 0);
+      vertices_ply.insert(vertices_ply.begin()+1, h);
+      vertices_ply.insert(vertices_ply.begin()+2, 0);
+    }
 
-  if (vertices_ply[vertices_ply.size()-3] !=0 || vertices_ply[vertices_ply.size()-1]!=0){
-    float h = vertices_ply[vertices_ply.size()-2];
+    if (vertices_ply[vertices_ply.size()-3] !=0 || vertices_ply[vertices_ply.size()-1]!=0){
+      float h = vertices_ply[vertices_ply.size()-2];
 
-    vertices_ply.push_back(0);
-    vertices_ply.push_back(h);
-    vertices_ply.push_back(0);
+      vertices_ply.push_back(0);
+      vertices_ply.push_back(h);
+      vertices_ply.push_back(0);
+    }
   }
 
   for (int i=0; i<num_instancias; i++)
@@ -587,7 +594,6 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
 }
 
 void SuperficieRevolucion::calcularCoordenadasTextura(){
-
   float d[vertices.size()/3];
   d[0] = 0;
 
@@ -596,7 +602,8 @@ void SuperficieRevolucion::calcularCoordenadasTextura(){
                          (vertices[3*i+1]-vertices[3*(i-1)+1])*(vertices[3*i+1]-vertices[3*(i-1)+1]) +
                          (vertices[3*i+2]-vertices[3*(i-1)+2])*(vertices[3*i+2]-vertices[3*(i-1)+2]));
 
-  for (int i=0; i<num_instancias; i++){
+
+  for (int i=0; i<=num_instancias; i++){
     float u = i/(num_instancias-1);
     for (int j=0; j<vertices.size()/3; j++){
       float v = d[j]/d[vertices.size()/3-1];
@@ -605,35 +612,6 @@ void SuperficieRevolucion::calcularCoordenadasTextura(){
       coordenadas_textura.push_back(v);
     }
   }
-
-  /* double Model_Revolution::distancia(_vertex3f a, _vertex3f b)
-{
-    double x = pow((b.x-a.x), 2);
-    double y = pow((b.y-a.y), 2);
-    double z = pow((b.z-a.z), 2);
-
-    return sqrt((double)(x+y+z));
-} */
-
-  /* int n_vertices = _vertices.size();
-
-    double d[M];    //vector de distancias
-    d[0] = 0;
-
-    for(unsigned int k=1; k<M; k++)
-        d[k] = d[k-1] + distancia(_vertices[k-1], _vertices[k]);
-
-    for(unsigned int i=0; i<=N; i++)
-    {
-        float si = (float)i/(N-1);
-        for(unsigned int j=0; j<M; j++)
-        {
-            float tj = d[j]/d[M-1];
-
-            _texturas.push_back(_vertex2f(si, tj));
-
-        }
-    } */
 }
 
 /**************************************************************************************/
@@ -727,6 +705,10 @@ void Dibuja (void)
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, dado.getTexId());
     dado.draw();
+    glTranslatef(5, 0, 2);
+    glScalef(4, 4, 4);
+    glBindTexture(GL_TEXTURE_2D, lata.getTexId());
+    lata.draw();
     glDisable(GL_TEXTURE_2D);
   }
   else if (a_dibujar == 1)

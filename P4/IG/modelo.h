@@ -223,9 +223,9 @@ class SuperficieRevolucion:public MallaVirtual
 
   SuperficieRevolucion(){};
 
-  SuperficieRevolucion(std::vector <float> vert, int num_inst);
+  SuperficieRevolucion(std::vector <float> vert, int num_inst, bool tapa = false);
 
-  SuperficieRevolucion(const char * nombre_archivo, int num_inst);
+  SuperficieRevolucion(const char * nombre_archivo, int num_inst, bool tapa = false);
 
   void calcularCoordenadasTextura();
 
