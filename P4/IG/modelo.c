@@ -54,6 +54,8 @@ PLY malla;
 SuperficieRevolucion superficie;
 Cubo dado(3, 3, 3);
 SuperficieRevolucion lata("plys/lata-pcue.ply", 20);
+SuperficieRevolucion lata_inf("plys/lata-pinf.ply", 20);
+SuperficieRevolucion lata_sup("plys/lata-psup.ply", 20);
 
 /**************************************************************************************/
 /**
@@ -105,7 +107,7 @@ initModel (int opcion, char * nombre_archivo)
 {
   if (opcion == 0){
     dado.asignarTextura("jpgs/dado.jpg");
-    lata.asignarTextura("jpgs/text-lata-1.jpg");
+    lata.asignarTextura("jpgs/text-lata.jpg");
     lata.calcularCoordenadasTextura();
   }
   else if (opcion == 1){
@@ -147,6 +149,11 @@ Ejes ejesCoordenadas;
 
 void Cubo::draw()
 {
+  if (textura){
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texId);
+  }
+
   glBegin(GL_QUADS);
     // left
     glNormal3f(1.0f, 0.0f, 0.0f);
@@ -216,7 +223,7 @@ void Cubo::draw()
 
   glEnd();
 
-
+  glDisable(GL_TEXTURE_2D);
 }
 
 /**************************************************************************************/
@@ -337,6 +344,11 @@ void MallaVirtual::draw(){
 
 void MallaVirtual::draw_smooth(){
 
+  if (textura){
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texId);
+  }
+
   for (int i=0; i<triangulos.size(); i+=3){
     glBegin(GL_TRIANGLES);
       glNormal3f(normales_vertices[3*triangulos[i]], normales_vertices[3*triangulos[i]+1], normales_vertices[3*triangulos[i]+2]);
@@ -351,9 +363,15 @@ void MallaVirtual::draw_smooth(){
     glEnd();
   }
 
+  glDisable(GL_TEXTURE_2D);
 }
 
 void MallaVirtual::draw_flat(){
+
+  if (textura){
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texId);
+  }
 
   for (int i=0; i<triangulos.size(); i+=3){
 
@@ -385,6 +403,7 @@ void MallaVirtual::draw_flat(){
     glEnd();
   }
 
+  glDisable(GL_TEXTURE_2D);
 }
 
 vector<float> MallaVirtual::calculoNormalCara(vector<float> v1, vector<float> v2, vector<float> v3){
@@ -428,7 +447,6 @@ vector<float> MallaVirtual::normalizaVector(vector<float> v){
       v[i+1] = v[i+1]/modulo;
       v[i+2] = v[i+2]/modulo;
     }
-
   }
 
   return v;
@@ -588,30 +606,29 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
       triangulos.push_back(k % n);
       triangulos.push_back((k+vertices_ply.size()/3+1) % n);
       triangulos.push_back((k+1) % n);
+      /* triangulos.push_back(k );
+      triangulos.push_back((k+vertices_ply.size()/3) );
+      triangulos.push_back((k+vertices_ply.size()/3+1) );
+
+      triangulos.push_back(k );
+      triangulos.push_back((k+vertices_ply.size()/3+1) );
+      triangulos.push_back((k+1) ); */
     }
 
   normales_vertices = calculoNormalVertices();
 }
 
 void SuperficieRevolucion::calcularCoordenadasTextura(){
-  float d[vertices.size()/3];
-  d[0] = 0;
+  if (textura)
+    for (float i=0; i<num_instancias; i++){
+      float u = i/(num_instancias-1);
+      for (float j=0; j<vertices_ply.size()/3; j++){
+        float v = 1.0 - (j/(vertices_ply.size()/3-1));
 
-  for (int i=1; i<vertices.size()/3; i++)
-    d[i] = d[i-1] + sqrt((vertices[3*i]-vertices[3*(i-1)])*(vertices[3*i]-vertices[3*(i-1)]) +
-                         (vertices[3*i+1]-vertices[3*(i-1)+1])*(vertices[3*i+1]-vertices[3*(i-1)+1]) +
-                         (vertices[3*i+2]-vertices[3*(i-1)+2])*(vertices[3*i+2]-vertices[3*(i-1)+2]));
-
-
-  for (int i=0; i<=num_instancias; i++){
-    float u = i/(num_instancias-1);
-    for (int j=0; j<vertices.size()/3; j++){
-      float v = d[j]/d[vertices.size()/3-1];
-
-      coordenadas_textura.push_back(u);
-      coordenadas_textura.push_back(v);
+        coordenadas_textura.push_back(u);
+        coordenadas_textura.push_back(v);
+      }
     }
-  }
 }
 
 /**************************************************************************************/
@@ -702,14 +719,12 @@ void Dibuja (void)
   glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color5);
 
   if (a_dibujar == 0){
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, dado.getTexId());
     dado.draw();
     glTranslatef(5, 0, 2);
     glScalef(4, 4, 4);
-    glBindTexture(GL_TEXTURE_2D, lata.getTexId());
     lata.draw();
-    glDisable(GL_TEXTURE_2D);
+    lata_inf.draw();
+    lata_sup.draw();
   }
   else if (a_dibujar == 1)
     superficie.draw();

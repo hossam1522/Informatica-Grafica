@@ -105,8 +105,6 @@ class Nodo
 
   void asignarTextura (const char * nombre_archivo);
 
-  GLuint getTexId(){return texId;}
-
 };
 
 class Ejes:public Nodo

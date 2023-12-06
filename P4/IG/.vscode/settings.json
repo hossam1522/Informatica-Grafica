@@ -46,7 +46,9 @@
         "stdexcept": "c",
         "streambuf": "c",
         "cinttypes": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "ranges": "c",
+        "span": "c"
     },
     "editor.tabSize": 2
 }
