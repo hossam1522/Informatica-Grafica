@@ -30,6 +30,7 @@
 #include <vector>
 
 enum TipoTransformacion {ROTACION, TRASLACION};
+enum Material {AMBIENTE, DIFUSO, ESPECULAR, AMBIENTALYDIFUSO};
 
 /**
 	Funcion de redibujado. Se ejecuta con los eventos postRedisplay
@@ -178,6 +179,8 @@ class MallaVirtual:public Nodo
     std::vector <int> triangulos;
     std::vector <float> normales_vertices;
     std::vector <float> coordenadas_textura;
+    Material material = AMBIENTALYDIFUSO; // Por defecto difuso
+    float color [4] = {0.5, 0.5, 0.5, 1.0}; // Por defecto gris
 
   public:
 
@@ -198,6 +201,10 @@ class MallaVirtual:public Nodo
   std::vector<float> normalizaVector(std::vector<float> v);
 
   MallaVirtual & operator=(const MallaVirtual & otro);
+
+  void setMaterial(Material material){this->material = material;}
+
+  void setColor(float r, float g, float b, float a){color[0] = r;color[1] = g;color[2] = b;color[3] = a;}
 
 };
 
@@ -225,7 +232,9 @@ class SuperficieRevolucion:public MallaVirtual
 
   SuperficieRevolucion(const char * nombre_archivo, int num_inst, bool tapa = false);
 
-  void calcularCoordenadasTextura();
+  void calcularCoordenadasTextura(float xi=0, float xf=1, float yi=0, float yf=1);
+
+  void draw();
 
 };
 

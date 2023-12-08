@@ -56,6 +56,10 @@ Cubo dado(3, 3, 3);
 SuperficieRevolucion lata("plys/lata-pcue.ply", 20);
 SuperficieRevolucion lata_inf("plys/lata-pinf.ply", 20);
 SuperficieRevolucion lata_sup("plys/lata-psup.ply", 20);
+PLY objeto1("plys/beethoven.ply");
+PLY objeto2 = objeto1;
+PLY objeto3 = objeto1;
+PLY objeto4 = objeto1;
 
 /**************************************************************************************/
 /**
@@ -109,6 +113,17 @@ initModel (int opcion, char * nombre_archivo)
     dado.asignarTextura("jpgs/dado.jpg");
     lata.asignarTextura("jpgs/text-lata.jpg");
     lata.calcularCoordenadasTextura();
+    lata_inf.asignarTextura("jpgs/tapas.jpg");
+    lata_inf.calcularCoordenadasTextura(0.5,1,0,1);
+    lata_sup.asignarTextura("jpgs/tapas.jpg");
+    lata_sup.calcularCoordenadasTextura(0,0.5,0,1);
+
+    objeto1.setMaterial(DIFUSO);
+    objeto1.setColor(0, 0, 1, 1);
+    //objeto2.setMaterial(ESPECULAR);
+    objeto2.setColor(0, 1, 0, 1);
+    //objeto3.setMaterial(AMBIENTE);
+    objeto3.setColor(1, 0, 0, 1);
   }
   else if (opcion == 1){
     superficie = SuperficieRevolucion(nombre_archivo, 20);
@@ -335,6 +350,17 @@ PLY::PLY(const char * nombre_archivo)
 }
 
 void MallaVirtual::draw(){
+  glColor3f(color[0], color[1], color[2]);
+
+  if (material == DIFUSO)
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
+  else if (material == ESPECULAR)
+    glMaterialfv(GL_FRONT, GL_SPECULAR, color);
+  else if (material == AMBIENTE)
+    glMaterialfv(GL_FRONT, GL_AMBIENT, color);
+  else
+    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
+
   if (!sombreado)
     draw_flat();
   else
@@ -495,6 +521,10 @@ MallaVirtual& MallaVirtual::operator=(const MallaVirtual &m){
   vertices = m.vertices;
   triangulos = m.triangulos;
   normales_vertices = m.normales_vertices;
+  coordenadas_textura = m.coordenadas_textura;
+  material = m.material;
+  for (int i=0; i<4; i++)
+    color[i] = m.color[i];
 
   return *this;
 }
@@ -537,23 +567,6 @@ SuperficieRevolucion::SuperficieRevolucion(vector<float> vert, int num_inst, boo
 
       vertices.push_back(-vertices_ply[j]*sin(alpha) + vertices_ply[j+2]*cos(alpha) );
     }
-
-  int n = vertices_ply.size()*(num_instancias-1);
-
-  for (int i=0; i<num_instancias-1; i++)
-    for (int j=0; j<vertices_ply.size()-3; j+=3){
-      int k = i*vertices_ply.size()/3 + j/3;
-
-      triangulos.push_back(k % n);
-      triangulos.push_back((k+vertices_ply.size()/3) % n);
-      triangulos.push_back((k+vertices_ply.size()/3+1) % n);
-
-      triangulos.push_back(k % n);
-      triangulos.push_back((k+vertices_ply.size()/3+1) % n);
-      triangulos.push_back((k+1) % n);
-    }
-
-  normales_vertices = calculoNormalVertices();
 }
 
 SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_inst, bool tapa){
@@ -593,42 +606,75 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
       vertices.push_back(-vertices_ply[j]*sin(alpha) + vertices_ply[j+2]*cos(alpha) );
     }
 
-  int n = vertices_ply.size()/3*(num_instancias-1);
-
-  for (int i=0; i<num_instancias-1; i++)
-    for (int j=0; j<vertices_ply.size()-3; j+=3){
-      int k = i*vertices_ply.size()/3 + j/3;
-
-      triangulos.push_back(k % n);
-      triangulos.push_back((k+vertices_ply.size()/3) % n);
-      triangulos.push_back((k+vertices_ply.size()/3+1) % n);
-
-      triangulos.push_back(k % n);
-      triangulos.push_back((k+vertices_ply.size()/3+1) % n);
-      triangulos.push_back((k+1) % n);
-      /* triangulos.push_back(k );
-      triangulos.push_back((k+vertices_ply.size()/3) );
-      triangulos.push_back((k+vertices_ply.size()/3+1) );
-
-      triangulos.push_back(k );
-      triangulos.push_back((k+vertices_ply.size()/3+1) );
-      triangulos.push_back((k+1) ); */
-    }
-
-  normales_vertices = calculoNormalVertices();
 }
 
-void SuperficieRevolucion::calcularCoordenadasTextura(){
+void SuperficieRevolucion::calcularCoordenadasTextura(float xi, float xf, float yi, float yf){
   if (textura)
     for (float i=0; i<num_instancias; i++){
-      float u = i/(num_instancias-1);
+      float u = xi+(xf-xi)*i/(num_instancias-1);
       for (float j=0; j<vertices_ply.size()/3; j++){
-        float v = 1.0 - (j/(vertices_ply.size()/3-1));
+        float v = 1.0 - (yi+(yf-yi)*j/(vertices_ply.size()/3-1));
 
         coordenadas_textura.push_back(u);
         coordenadas_textura.push_back(v);
       }
     }
+}
+
+void SuperficieRevolucion::draw(){
+  vector<int> tmp; // Para guardar los triángulos
+
+  if (!textura){
+    int n = vertices_ply.size()/3*(num_instancias-1);
+
+    for (int i=0; i<num_instancias-1; i++)
+      for (int j=0; j<vertices_ply.size()-3; j+=3){
+        int k = i*vertices_ply.size()/3 + j/3;
+
+        tmp.push_back(k % n);
+        tmp.push_back((k+vertices_ply.size()/3) % n);
+        tmp.push_back((k+vertices_ply.size()/3+1) % n);
+
+        tmp.push_back(k % n);
+        tmp.push_back((k+vertices_ply.size()/3+1) % n);
+        tmp.push_back((k+1) % n);
+      }
+  }
+  else {
+    int n = vertices_ply.size()/3*(num_instancias-1);
+
+    for (int i=0; i<num_instancias-1; i++)
+      for (int j=0; j<vertices_ply.size()-3; j+=3){
+        int k = i*vertices_ply.size()/3 + j/3;
+
+        tmp.push_back(k );
+        tmp.push_back((k+vertices_ply.size()/3) );
+        tmp.push_back((k+vertices_ply.size()/3+1) );
+
+        tmp.push_back(k );
+        tmp.push_back((k+vertices_ply.size()/3+1) );
+        tmp.push_back((k+1) );
+      }
+  }
+
+  triangulos = tmp;
+  normales_vertices = calculoNormalVertices();
+
+  glColor3f(color[0], color[1], color[2]);
+
+  if (material == DIFUSO)
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
+  else if (material == ESPECULAR)
+    glMaterialfv(GL_FRONT, GL_SPECULAR, color);
+  else if (material == AMBIENTE)
+    glMaterialfv(GL_FRONT, GL_AMBIENT, color);
+  else
+    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
+
+  if (!sombreado)
+    draw_flat();
+  else
+    draw_smooth();
 }
 
 /**************************************************************************************/
@@ -679,13 +725,6 @@ void Dibuja (void)
   static GLfloat  pos[4] = { 5.0, 5.0, 10.0, 0.0 };	// Posicion de la fuente de luz
   //static GLfloat  pos[4] = { -13.0, -6.0, 0.0, 0.0 };	// Posicion de la fuente de luz
 
-
-  float  color[4] = { 0.8, 0.0, 1, 1 };
-  float color2[4] = { 0.0, 1.0, 0, 1 };
-  float color3[4] = { 0.8, 0.0, 0, 1 };
-  float color4[4] = { 0.0, 0.0, 1, 1 };
-  float color5[4] = { 0.5, 0.5, 0.5, 1 };
-
   glPushMatrix ();		// Apila la transformacion geometrica actual
 
   glClearColor (0.0, 0.0, 0.0, 1.0);	// Fija el color de fondo a negro
@@ -714,9 +753,9 @@ void Dibuja (void)
     glShadeModel(GL_SMOOTH);
 
   // Dibuja el modelo (A rellenar en prácticas 1,2 y 3)
-
+  float color_prueba[4]={0.5,0.5,0.5,1};
   glColor3f(0.5, 0.5, 0.5);
-  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color5);
+  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color_prueba);
 
   if (a_dibujar == 0){
     dado.draw();
@@ -725,6 +764,15 @@ void Dibuja (void)
     lata.draw();
     lata_inf.draw();
     lata_sup.draw();
+    glScalef(0.1,0.1,0.1);
+    glTranslatef(10,6,0);
+    objeto1.draw();
+    glTranslatef(10,0,0);
+    objeto2.draw();
+    glTranslatef(10,0,0);
+    objeto3.draw();
+    glTranslatef(10,0,0);
+    objeto4.draw();
   }
   else if (a_dibujar == 1)
     superficie.draw();
