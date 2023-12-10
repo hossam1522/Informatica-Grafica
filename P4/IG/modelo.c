@@ -60,7 +60,6 @@ SuperficieRevolucion lata_sup("plys/lata-psup.ply", 20);
 PLY objeto1("plys/beethoven.ply");
 PLY objeto2 = objeto1;
 PLY objeto3 = objeto1;
-PLY objeto4 = objeto1;
 
 /**************************************************************************************/
 /**************************************************************************************/
@@ -84,17 +83,17 @@ initModel (int opcion, char * nombre_archivo)
     lata_sup.calcularCoordenadasTextura(0,0.5,0,1);
 
     objeto1.setAmbiente(0, 0, 1, 1);
-    objeto1.setDifusa(0.2, 0.2, 0.2, 1);
-    objeto1.setEspecular(0.2, 0.2, 0.2, 1);
+    objeto1.setDifusa(0.2, 0.2, 0.6, 1);
+    objeto1.setEspecular(0.2, 0.2, 0.6, 1);
     objeto1.setColor(0, 0, 1, 1);
 
-    objeto2.setAmbiente(0.2, 0.2, 0.2, 1);
+    objeto2.setAmbiente(0, 0.5, 0, 1);
     objeto2.setDifusa(0, 1, 0, 1);
-    objeto2.setEspecular(0.2, 0.2, 0.2, 1);
+    objeto2.setEspecular(0.2, 0.6, 0.2, 1);
     objeto2.setColor(0, 1, 0, 1);
 
-    objeto3.setAmbiente(0.2, 0.2, 0.2, 1);
-    objeto3.setDifusa(0.2, 0.2, 0.2, 1);
+    objeto3.setAmbiente(0.3, 0, 0, 1);
+    objeto3.setDifusa(0.7, 0.2, 0.2, 1);
     objeto3.setEspecular(1, 0, 0, 1);
     objeto3.setColor(1, 0, 0, 1);
   }
@@ -141,6 +140,14 @@ void Cubo::draw()
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texId);
   }
+
+  float color[4]={0.5,0.5,0.5,1};
+  float nocolor[4]={0,0,0,1};
+  glColor3f(0.5, 0.5, 0.5);
+  glMaterialfv (GL_FRONT, GL_AMBIENT, nocolor);
+  glMaterialfv (GL_FRONT, GL_DIFFUSE, nocolor);
+  glMaterialfv (GL_FRONT, GL_SPECULAR, nocolor);
+  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
 
   glBegin(GL_QUADS);
     // left
@@ -711,8 +718,8 @@ Procedimiento de dibujo del modelo. Es llamado por glut cada vez que se debe red
 
 void Dibuja (void)
 {
-  static GLfloat  pos1[4] = { 5.0, 5.0, 10.0, 0.0 };	// Posicion de la fuente de luz
-  static GLfloat  pos2[4] = { -13.0, -6.0, -10.0, 0.0 };	// Posicion de la fuente de luz
+  static GLfloat  pos1[4] = { 5.0, 0.0, 10.0, 0.0 };	// Posicion de la fuente de luz
+  static GLfloat  pos2[4] = { -13.0, 0.0, -10.0, 0.0 };	// Posicion de la fuente de luz
 
   glPushMatrix ();		// Apila la transformacion geometrica actual
 
@@ -725,7 +732,14 @@ void Dibuja (void)
 
   glLightfv (GL_LIGHT0, GL_POSITION, pos1);	// Declaracion de luz. Colocada aqui esta fija en la escena
   glLightfv (GL_LIGHT1, GL_POSITION, pos2);
-
+  float luz_ambiente1[4] = {1,0,1,1};
+  float luz_difusa1[4] = {0.5, 0, 0.5, 1};
+  float luz_ambiente2[4] = {1,1,0,1};
+  float luz_difusa2[4] = {0.5, 0.5, 0, 1};
+  glLightfv(GL_LIGHT0,GL_AMBIENT, luz_ambiente1);
+  glLightfv(GL_LIGHT0,GL_DIFFUSE, luz_difusa1);
+  glLightfv(GL_LIGHT1,GL_AMBIENT, luz_ambiente2);
+  glLightfv(GL_LIGHT1,GL_DIFFUSE, luz_difusa2);
 
   ejesCoordenadas.draw();			// Dibuja los ejes
 
@@ -737,12 +751,6 @@ void Dibuja (void)
     glDisable(GL_LIGHTING);
   else
     glEnable(GL_LIGHTING);
-
-  GLfloat color1[4] = {0,0,1,1};
-  GLfloat color2[4] = {1,0,0,1};
-
-  glLightfv(GL_LIGHT0,GL_AMBIENT_AND_DIFFUSE, color1);
-  glLightfv(GL_LIGHT1,GL_AMBIENT_AND_DIFFUSE, color2);
 
   if (luces[0] && iluminacion)
     glEnable(GL_LIGHT0);
@@ -760,9 +768,6 @@ void Dibuja (void)
     glShadeModel(GL_SMOOTH);
 
   // Dibuja el modelo (A rellenar en prácticas 1,2 y 3)
-  //float color_prueba[4]={0.5,0.5,0.5,1};
-  glColor3f(0.5, 0.5, 0.5);
-  //glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color_prueba);
 
   if (a_dibujar == 0){
     dado.draw();
@@ -772,30 +777,12 @@ void Dibuja (void)
     lata_inf.draw();
     lata_sup.draw();
     glScalef(0.1,0.1,0.1);
-    /* glPushMatrix();
-      glTranslatef(10,6,0);
-      objeto1.draw();
-    glPopMatrix();
-    glPushMatrix();
-      glTranslatef(20,6,0);
-      objeto2.draw();
-    glPopMatrix();
-    glPushMatrix();
-      glTranslatef(30,6,0);
-      objeto3.draw();
-    glPopMatrix();
-    glPushMatrix();
-      glTranslatef(40,6,0);
-      objeto4.draw();
-    glPopMatrix(); */;
     glTranslatef(10,6,0);
     objeto1.draw();
     glTranslatef(10,0,0);
     objeto2.draw();
     glTranslatef(10,0,0);
     objeto3.draw();
-    glTranslatef(10,0,0);
-    objeto4.draw();
   }
   else if (a_dibujar == 1)
     superficie.draw();
@@ -843,6 +830,10 @@ void setIluminacion ()
   iluminacion = !iluminacion;
 }
 
+void setLuz(int i){
+  luces[i] = !luces[i];
+}
+
 void setSombreado ()
 {
   sombreado = !sombreado;
@@ -879,6 +870,3 @@ void disminuirVelocidadGradoLibertad(int i){
       gl2-=0.1;
 }
 
-void setLuz(int i){
-  luces[i] = !luces[i];
-}
