@@ -41,6 +41,7 @@ using namespace std;
 
 int modo = GL_FILL;    // Modo de visualizacion inicial (GL_POINT, GL_LINE, GL_FILL)
 bool iluminacion = false;   // Visualizacion inicial con iluminacion
+bool luces[2] = {true, true};   // Luces inicialmente encendidas
 bool sombreado = false;   // Visualizacion inicial con sombreado plano (false) y suave (true)
 bool animacion = false;   // Animación inicial desactivada
 int  a_dibujar = 0;     // Objeto a dibujar (0: practica original, 1: superficie, 2: malla)
@@ -62,43 +63,7 @@ PLY objeto3 = objeto1;
 PLY objeto4 = objeto1;
 
 /**************************************************************************************/
-/**
- * @brief Telescopio
- *
- */
-/* SuperficieRevolucion A("plys/A.ply", 20);
-SuperficieRevolucion B("plys/B.ply", 20);
-SuperficieRevolucion C("plys/C.ply", 20);
-SuperficieRevolucion D_("plys/D.ply", 20);
-SuperficieRevolucion SoporteCabeza("plys/SoporteCabeza.ply", 20);
-SuperficieRevolucion P("plys/Pata.ply", 20);
-
-Nodo *Telescopio = new Nodo();
-Nodo *Cabeza = new Nodo();
-Nodo *Patas = new Nodo();
-Nodo *Pata = new Nodo();
-Nodo *Cuerpo = new Nodo();
-Nodo *Mira = new Nodo();
-
-Transformacion T1(TRASLACION, vector<float>()={0, 3, 0});
-Transformacion T2(TRASLACION, vector<float>()={0, -6, 0});
-Transformacion T3(TRASLACION, vector<float>()={-4.5, 0, 0});
-Transformacion T4(TRASLACION, vector<float>()={-3, -1, 0});
-Transformacion T5(TRASLACION, vector<float>()={0, -6, 0});
-Transformacion T6(TRASLACION, vector<float>()={0, 14, 0});
-Transformacion T7(TRASLACION, vector<float>()={0, 2, 0});
-Transformacion Ta(TRASLACION, vector<float>()={0, 0, 0}, true);
-Transformacion R1(ROTACION, vector<float>()={120, 0, 1, 0});
-Transformacion R2(ROTACION, vector<float>()={120, 0, 1, 0});
-Transformacion R3(ROTACION, vector<float>()={-37, 0, 0, 1});
-Transformacion R4(ROTACION, vector<float>()={-60, 0, 0, 1});
-Transformacion R5(ROTACION, vector<float>()={90, 0, 0, 1});
-Transformacion R6(ROTACION, vector<float>()={90, 0, 0, 1});
-Transformacion Ra(ROTACION, vector<float>()={0, 0, 1, 0}, true);
-Transformacion Rb(ROTACION, vector<float>()={0, 0, 0, 1}, true); */
-
 /**************************************************************************************/
-
 
 /**	void initModel()
 
@@ -118,11 +83,19 @@ initModel (int opcion, char * nombre_archivo)
     lata_sup.asignarTextura("jpgs/tapas.jpg");
     lata_sup.calcularCoordenadasTextura(0,0.5,0,1);
 
-    objeto1.setMaterial(AMBIEN);
+    objeto1.setAmbiente(0, 0, 1, 1);
+    objeto1.setDifusa(0.2, 0.2, 0.2, 1);
+    objeto1.setEspecular(0.2, 0.2, 0.2, 1);
     objeto1.setColor(0, 0, 1, 1);
-    objeto2.setMaterial(DIFUSO);
+
+    objeto2.setAmbiente(0.2, 0.2, 0.2, 1);
+    objeto2.setDifusa(0, 1, 0, 1);
+    objeto2.setEspecular(0.2, 0.2, 0.2, 1);
     objeto2.setColor(0, 1, 0, 1);
-    objeto3.setMaterial(AMBIENTALYDIFUSO);
+
+    objeto3.setAmbiente(0.2, 0.2, 0.2, 1);
+    objeto3.setDifusa(0.2, 0.2, 0.2, 1);
+    objeto3.setEspecular(1, 0, 0, 1);
     objeto3.setColor(1, 0, 0, 1);
   }
   else if (opcion == 1){
@@ -352,22 +325,11 @@ PLY::PLY(const char * nombre_archivo)
 void MallaVirtual::draw(){
   glColor3f(color[0], color[1], color[2]);
 
- /*  if (material == DIFUSO)
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, luz_difusa);
-  else if (material == ESPECULAR)
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, luz_especular);
-  else if (material == AMBIENTE)
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, luz_ambiente);
-  else
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color); */
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, difusa);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especular);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambiente);
 
-  if (material == DIFUSO)
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
-  else if (material == ESPECULAR)
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color);
-  else if (material == AMBIENTE)
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color);
-  else
+  if (!cambio_material)
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 
   if (!sombreado)
@@ -531,9 +493,13 @@ MallaVirtual& MallaVirtual::operator=(const MallaVirtual &m){
   triangulos = m.triangulos;
   normales_vertices = m.normales_vertices;
   coordenadas_textura = m.coordenadas_textura;
-  material = m.material;
-  for (int i=0; i<4; i++)
+  for (int i=0; i<4; i++){
+    ambiente[i] = m.ambiente[i];
+    difusa[i] = m.difusa[i];
+    especular[i] = m.especular[i];
     color[i] = m.color[i];
+  }
+  cambio_material = m.cambio_material;
 
   return *this;
 }
@@ -687,14 +653,12 @@ void SuperficieRevolucion::draw(){
 
   glColor3f(color[0], color[1], color[2]);
 
-  if (material == DIFUSO)
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
-  else if (material == ESPECULAR)
-    glMaterialfv(GL_FRONT, GL_SPECULAR, color);
-  else if (material == AMBIENTE)
-    glMaterialfv(GL_FRONT, GL_AMBIENT, color);
-  else
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, difusa);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especular);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambiente);
+
+  if (!cambio_material)
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 
   if (!sombreado)
     draw_flat();
@@ -747,8 +711,8 @@ Procedimiento de dibujo del modelo. Es llamado por glut cada vez que se debe red
 
 void Dibuja (void)
 {
-  static GLfloat  pos[4] = { 5.0, 5.0, 10.0, 0.0 };	// Posicion de la fuente de luz
-  //static GLfloat  pos[4] = { -13.0, -6.0, 0.0, 0.0 };	// Posicion de la fuente de luz
+  static GLfloat  pos1[4] = { 5.0, 5.0, 10.0, 0.0 };	// Posicion de la fuente de luz
+  static GLfloat  pos2[4] = { -13.0, -6.0, -10.0, 0.0 };	// Posicion de la fuente de luz
 
   glPushMatrix ();		// Apila la transformacion geometrica actual
 
@@ -759,7 +723,9 @@ void Dibuja (void)
 
   transformacionVisualizacion ();	// Carga transformacion de visualizacion
 
-  glLightfv (GL_LIGHT0, GL_POSITION, pos);	// Declaracion de luz. Colocada aqui esta fija en la escena
+  glLightfv (GL_LIGHT0, GL_POSITION, pos1);	// Declaracion de luz. Colocada aqui esta fija en la escena
+  glLightfv (GL_LIGHT1, GL_POSITION, pos2);
+
 
   ejesCoordenadas.draw();			// Dibuja los ejes
 
@@ -772,15 +738,31 @@ void Dibuja (void)
   else
     glEnable(GL_LIGHTING);
 
+  GLfloat color1[4] = {0,0,1,1};
+  GLfloat color2[4] = {1,0,0,1};
+
+  glLightfv(GL_LIGHT0,GL_AMBIENT_AND_DIFFUSE, color1);
+  glLightfv(GL_LIGHT1,GL_AMBIENT_AND_DIFFUSE, color2);
+
+  if (luces[0] && iluminacion)
+    glEnable(GL_LIGHT0);
+  else if (iluminacion)
+    glDisable(GL_LIGHT0);
+
+  if (luces[1] && iluminacion)
+    glEnable(GL_LIGHT1);
+  else if (iluminacion)
+    glDisable(GL_LIGHT1);
+
   if (!sombreado)
     glShadeModel(GL_FLAT);
   else
     glShadeModel(GL_SMOOTH);
 
   // Dibuja el modelo (A rellenar en prácticas 1,2 y 3)
-  float color_prueba[4]={0.5,0.5,0.5,1};
+  //float color_prueba[4]={0.5,0.5,0.5,1};
   glColor3f(0.5, 0.5, 0.5);
-  glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color_prueba);
+  //glMaterialfv (GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color_prueba);
 
   if (a_dibujar == 0){
     dado.draw();
@@ -895,4 +877,8 @@ void disminuirVelocidadGradoLibertad(int i){
       gl1-=5;
     else if (i==2 && gl2>0.1)
       gl2-=0.1;
+}
+
+void setLuz(int i){
+  luces[i] = !luces[i];
 }

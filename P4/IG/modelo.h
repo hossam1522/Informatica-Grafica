@@ -30,7 +30,6 @@
 #include <vector>
 
 enum TipoTransformacion {ROTACION, TRASLACION};
-enum Material {AMBIENTE, DIFUSO, ESPECULAR, AMBIENTALYDIFUSO};
 
 /**
 	Funcion de redibujado. Se ejecuta con los eventos postRedisplay
@@ -56,6 +55,11 @@ void setModo (int M);
 	Funcion de cambio de iluminacion
 **/
 void setIluminacion ();
+
+/**
+  Funcion de encendido y apagado de la luz número i
+**/
+void setLuz(int i);
 
 /**
   Funcion de cambio del modo de sombreado
@@ -179,11 +183,11 @@ class MallaVirtual:public Nodo
     std::vector <int> triangulos;
     std::vector <float> normales_vertices;
     std::vector <float> coordenadas_textura;
-    Material material = AMBIENTALYDIFUSO; // Por defecto difuso
     float color [4] = {0.5, 0.5, 0.5, 1.0}; // Por defecto gris
-    float luz_ambiente[4] = {0.0, 0.0, 0.0, 1.0};
-    float luz_difusa[4] = {1.0, 1.0, 1.0, 1.0};
-    float luz_especular[4] = {1.0, 1.0, 1.0, 1.0};
+    float ambiente[4] = {0.0, 0.0, 0.0, 1.0};
+    float difusa[4] = {0.0, 0.0, 0.0, 1.0};
+    float especular[4] = {0.0, 0.0, 0.0, 1.0};
+    bool cambio_material = false;
 
   public:
 
@@ -205,15 +209,16 @@ class MallaVirtual:public Nodo
 
   MallaVirtual & operator=(const MallaVirtual & otro);
 
-  void setMaterial(Material material){this->material = material;}
-
   void setColor(float r, float g, float b, float a){color[0] = r;color[1] = g;color[2] = b;color[3] = a;}
 
-  void setLuzAmbiente(float r, float g, float b, float a){luz_ambiente[0] = r;luz_ambiente[1] = g;luz_ambiente[2] = b;luz_ambiente[3] = a;}
+  void setAmbiente(float r, float g, float b, float a){
+    ambiente[0] = r;ambiente[1] = g;ambiente[2] = b;ambiente[3] = a;cambio_material = true;}
 
-  void setLuzDifusa(float r, float g, float b, float a){luz_difusa[0] = r;luz_difusa[1] = g;luz_difusa[2] = b;luz_difusa[3] = a;}
+  void setDifusa(float r, float g, float b, float a){
+    difusa[0] = r;difusa[1] = g;difusa[2] = b;difusa[3] = a;cambio_material = true;}
 
-  void setLuzEspecular(float r, float g, float b, float a){luz_especular[0] = r;luz_especular[1] = g;luz_especular[2] = b;luz_especular[3] = a;}
+  void setEspecular(float r, float g, float b, float a){
+    especular[0] = r;especular[1] = g;especular[2] = b;especular[3] = a;cambio_material = true;}
 
 };
 

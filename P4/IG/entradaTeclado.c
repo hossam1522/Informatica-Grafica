@@ -70,6 +70,8 @@ void printHelp ()
   printf ("j: disminuye la velocidad del segundo grado de libertad (solo si está la animacion activada)\n\n");
   printf ("K: aumenta la velocidad del tercer grado de libertad (solo si está la animacion activada)\n\n");
   printf ("k: disminuye la velocidad del tercer grado de libertad (solo si está la animacion activada)\n\n");
+  printf ("1: activa/desactiva la luz 1\n\n");
+  printf ("2: activa/desactiva la luz 2\n\n");
   printf ("\n\n");
   printf (" Uso del programa (parámetros disponibles): \n\n");
   printf ("\t--help -> muestra la ayuda \n\n");
@@ -180,6 +182,12 @@ void letra (unsigned char k, int x, int y)
       break;
     case 'k':
       disminuirVelocidadGradoLibertad(2);
+      break;
+    case '1':
+      setLuz(0);
+      break;
+    case '2':
+      setLuz(1);
       break;
     case 27:			// Escape  Terminar
       exit (0);
