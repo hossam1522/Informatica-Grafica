@@ -118,11 +118,11 @@ initModel (int opcion, char * nombre_archivo)
     lata_sup.asignarTextura("jpgs/tapas.jpg");
     lata_sup.calcularCoordenadasTextura(0,0.5,0,1);
 
-    objeto1.setMaterial(DIFUSO);
+    objeto1.setMaterial(AMBIEN);
     objeto1.setColor(0, 0, 1, 1);
-    //objeto2.setMaterial(ESPECULAR);
+    objeto2.setMaterial(DIFUSO);
     objeto2.setColor(0, 1, 0, 1);
-    //objeto3.setMaterial(AMBIENTE);
+    objeto3.setMaterial(AMBIENTALYDIFUSO);
     objeto3.setColor(1, 0, 0, 1);
   }
   else if (opcion == 1){
@@ -352,14 +352,23 @@ PLY::PLY(const char * nombre_archivo)
 void MallaVirtual::draw(){
   glColor3f(color[0], color[1], color[2]);
 
-  if (material == DIFUSO)
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
+ /*  if (material == DIFUSO)
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, luz_difusa);
   else if (material == ESPECULAR)
-    glMaterialfv(GL_FRONT, GL_SPECULAR, color);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, luz_especular);
   else if (material == AMBIENTE)
-    glMaterialfv(GL_FRONT, GL_AMBIENT, color);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, luz_ambiente);
   else
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color); */
+
+  if (material == DIFUSO)
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
+  else if (material == ESPECULAR)
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color);
+  else if (material == AMBIENTE)
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color);
+  else
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 
   if (!sombreado)
     draw_flat();
@@ -609,16 +618,32 @@ SuperficieRevolucion::SuperficieRevolucion(const char * nombre_archivo, int num_
 }
 
 void SuperficieRevolucion::calcularCoordenadasTextura(float xi, float xf, float yi, float yf){
-  if (textura)
+  if (textura){
+    float d[vertices_ply.size()/3];
+    d[0]=0;
+
+    for (int i=1; i<vertices_ply.size()/3; i++){
+      float x1 = vertices_ply[3*i];
+      float y1 = vertices_ply[3*i+1];
+      float z1 = vertices_ply[3*i+2];
+
+      float x2 = vertices_ply[3*(i-1)];
+      float y2 = vertices_ply[3*(i-1)+1];
+      float z2 = vertices_ply[3*(i-1)+2];
+
+      d[i] = d[i-1] + sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) + (z1-z2)*(z1-z2));
+    }
+
     for (float i=0; i<num_instancias; i++){
       float u = xi+(xf-xi)*i/(num_instancias-1);
-      for (float j=0; j<vertices_ply.size()/3; j++){
-        float v = 1.0 - (yi+(yf-yi)*j/(vertices_ply.size()/3-1));
+      for (unsigned int j=0; j<vertices_ply.size()/3; j++){
+        float v = 1.0 - (yi+(yf-yi)*d[j]/d[vertices_ply.size()/3-1]);
 
         coordenadas_textura.push_back(u);
         coordenadas_textura.push_back(v);
       }
     }
+  }
 }
 
 void SuperficieRevolucion::draw(){
@@ -765,6 +790,22 @@ void Dibuja (void)
     lata_inf.draw();
     lata_sup.draw();
     glScalef(0.1,0.1,0.1);
+    /* glPushMatrix();
+      glTranslatef(10,6,0);
+      objeto1.draw();
+    glPopMatrix();
+    glPushMatrix();
+      glTranslatef(20,6,0);
+      objeto2.draw();
+    glPopMatrix();
+    glPushMatrix();
+      glTranslatef(30,6,0);
+      objeto3.draw();
+    glPopMatrix();
+    glPushMatrix();
+      glTranslatef(40,6,0);
+      objeto4.draw();
+    glPopMatrix(); */;
     glTranslatef(10,6,0);
     objeto1.draw();
     glTranslatef(10,0,0);
@@ -831,100 +872,9 @@ void setAnimacion ()
 }
 
 void aumentarGradoLibertad(int i){
-  /* if (i == 0 && !animacion){
-
-    float v = ((Transformacion*)Telescopio->getHijos()[3])->getValorRotacion();
-    ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v +5);
-    if (v +5 > 360)
-      ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v +5 -360);
-
-  }
-  else if (i==0){
-
-    float v = ((Transformacion*)Telescopio->getHijos()[3])->getValorRotacion();
-    ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v +gl0);
-    if (v +gl0 > 360)
-      ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v +gl0 -360);
-
-  }
-  else if (i == 1 && !animacion){
-
-    float v = ((Transformacion*)Telescopio->getHijos()[4])->getValorRotacion();
-    if (v +5 < 20)
-      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v +5);
-
-  }
-  else if (i==1){
-
-    float v = ((Transformacion*)Telescopio->getHijos()[4])->getValorRotacion();
-    if (v +gl1 < 20)
-      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v +gl1);
-    else
-      max1 = true;
-
-  }
-  else if (i == 2 && !animacion){
-    vector <float> v = ((Transformacion*)Cuerpo->getHijos()[3])->getValorTraslacion();
-    if (v[1]+0.1 < 1.7)
-      ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]+0.1, v[2]});
-
-  }
-  else if (i==2){
-    vector <float> v = ((Transformacion*)Cuerpo->getHijos()[3])->getValorTraslacion();
-    ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]+gl2, v[2]});
-    if (v[1]+gl2 < 1.7)
-      ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]+gl2, v[2]});
-    else
-      max2 = true;
-  } */
 }
 
 void disminuirGradoLibertad(int i){
-  /* if (i == 0 && !animacion){
-
-    float v = ((Transformacion*)Telescopio->getHijos()[3])->getValorRotacion();
-    ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v -5);
-    if (v -5 < 0)
-      ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v -5 +360);
-
-  }
-  else if (i==0){
-
-    float v = ((Transformacion*)Telescopio->getHijos()[3])->getValorRotacion();
-    ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v -gl0);
-    if (v -gl0 < 0)
-      ((Transformacion*)Telescopio->getHijos()[3])->setValorRotacion (v -gl0 +360);
-
-  }
-  else if (i == 1 && !animacion){
-
-    float v = ((Transformacion*)Telescopio->getHijos()[4])->getValorRotacion();
-    if (v -5 > -70)
-      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v -5);
-
-  }
-  else if (i==1){
-
-    float v = ((Transformacion*)Telescopio->getHijos()[4])->getValorRotacion();
-    if (v -gl1 > -70)
-      ((Transformacion*)Telescopio->getHijos()[4])->setValorRotacion (v -gl1);
-    else
-      max1 = false;
-
-  }
-  else if (i == 2 && !animacion){
-    vector <float> v = ((Transformacion*)Cuerpo->getHijos()[3])->getValorTraslacion();
-    if (v[1]-0.1 > -1.3)
-      ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]-0.1, v[2]});
-
-  }
-  else if (i==2){
-    vector <float> v = ((Transformacion*)Cuerpo->getHijos()[3])->getValorTraslacion();
-    if (v[1]-gl2 > -1.3)
-      ((Transformacion*)Cuerpo->getHijos()[3])->setValorTraslacion (vector<float>()={v[0], v[1]-gl2, v[2]});
-    else
-      max2 = false;
-  } */
 }
 
 void aumentarVelocidadGradoLibertad(int i){

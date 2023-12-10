@@ -181,6 +181,9 @@ class MallaVirtual:public Nodo
     std::vector <float> coordenadas_textura;
     Material material = AMBIENTALYDIFUSO; // Por defecto difuso
     float color [4] = {0.5, 0.5, 0.5, 1.0}; // Por defecto gris
+    float luz_ambiente[4] = {0.0, 0.0, 0.0, 1.0};
+    float luz_difusa[4] = {1.0, 1.0, 1.0, 1.0};
+    float luz_especular[4] = {1.0, 1.0, 1.0, 1.0};
 
   public:
 
@@ -205,6 +208,12 @@ class MallaVirtual:public Nodo
   void setMaterial(Material material){this->material = material;}
 
   void setColor(float r, float g, float b, float a){color[0] = r;color[1] = g;color[2] = b;color[3] = a;}
+
+  void setLuzAmbiente(float r, float g, float b, float a){luz_ambiente[0] = r;luz_ambiente[1] = g;luz_ambiente[2] = b;luz_ambiente[3] = a;}
+
+  void setLuzDifusa(float r, float g, float b, float a){luz_difusa[0] = r;luz_difusa[1] = g;luz_difusa[2] = b;luz_difusa[3] = a;}
+
+  void setLuzEspecular(float r, float g, float b, float a){luz_especular[0] = r;luz_especular[1] = g;luz_especular[2] = b;luz_especular[3] = a;}
 
 };
 
