@@ -1,13 +1,13 @@
 /*	Prácticas de Informática Gráfica
 
 	Grupo C					Curso 2022-23
- 	
+
 	Codigo base para la realización de las practicas de IG
-	
-	Estudiante: 
+
+	Estudiante: Hossam El Amraoui Leghzali
 
 =======================================================
-	G. Arroyo, J.C. Torres 
+	G. Arroyo, J.C. Torres
 	Dpto. Lenguajes y Sistemas Informticos
 	(Univ. de Granada)
 
@@ -19,7 +19,7 @@
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details 
+ GNU General Public License for more details
  http://www.gnu.org/copyleft/gpl.html
 
 =======================================================
@@ -39,7 +39,15 @@ Cambia los parámetros de la cámara en el modulo visual
 **/
 void setCamara (float ax, float ay, float d);
 
+void setPuntoDeMira (float x, float y);
 
+void setPosicion (float x, float y, float z);
+
+std::vector<float> getDireccion ();
+
+void setDireccion (std::vector<float> direcc);
+
+void actualizaDireccion ();
 
 /** 	void transformacionVisualizacion()
 

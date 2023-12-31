@@ -437,21 +437,6 @@ vector<float> MallaVirtual::calculoNormalCara(vector<float> v1, vector<float> v2
 
 }
 
-vector<float> MallaVirtual::normalizaVector(vector<float> v){
-
-  for (int i=0; i<v.size(); i+=3){
-    float modulo = sqrt(v[i]*v[i] + v[i+1]*v[i+1] + v[i+2]*v[i+2]);
-    if (modulo > 0){
-      v[i] = v[i]/modulo;
-      v[i+1] = v[i+1]/modulo;
-      v[i+2] = v[i+2]/modulo;
-    }
-  }
-
-  return v;
-
-}
-
 vector<float> MallaVirtual::calculoNormalVertices(){
 
   vector<float> normales (vertices.size(), 0);
@@ -862,3 +847,17 @@ void disminuirVelocidadGradoLibertad(int i){
       gl2-=0.1;
 }
 
+vector<float> normalizaVector(vector<float> v){
+
+  for (int i=0; i<v.size(); i+=3){
+    float modulo = sqrt(v[i]*v[i] + v[i+1]*v[i+1] + v[i+2]*v[i+2]);
+    if (modulo > 0){
+      v[i] = v[i]/modulo;
+      v[i+1] = v[i+1]/modulo;
+      v[i+2] = v[i+2]/modulo;
+    }
+  }
+
+  return v;
+
+}

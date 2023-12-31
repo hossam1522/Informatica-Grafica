@@ -107,7 +107,8 @@ y:
 
 float rotxCamara = 30, rotyCamara = 45;
 float dCamara = 10;
-
+float x_camara = 0, y_camara = 5, z_camara = 5;
+float x_pos = 0, y_pos = 0, z_pos = 0;
 
 void letra (unsigned char k, int x, int y)
 {
@@ -123,6 +124,30 @@ void letra (unsigned char k, int x, int y)
       break;
     case '-':			// aleja la cámara
       dCamara += 5.0;
+      break;
+    case 'w':
+    case 'W':
+      x_camara += getDireccion()[0];
+      y_camara += getDireccion()[1];
+      z_camara += getDireccion()[2];
+      break;
+    case 'a':
+    case 'A':
+      x_camara += getDireccion()[2];
+      y_camara -= 0;
+      z_camara -= getDireccion()[0];
+      break;
+    case 's':
+    case 'S':
+      x_camara -= getDireccion()[0];
+      y_camara -= getDireccion()[1];
+      z_camara -= getDireccion()[2];
+      break;
+    case 'd':
+    case 'D':
+      x_camara -= getDireccion()[2];
+      y_camara += 0;
+      z_camara += getDireccion()[0];
       break;
     case 'p':
     case 'P':
@@ -140,8 +165,8 @@ void letra (unsigned char k, int x, int y)
     case 'I':
       setIluminacion ();	// I y i cambian a modo iluminacion
       break;
-    case 's':
-    case 'S':
+    case 'o':
+    case 'O':
       setSombreado ();		// S y s cambian a modo sombreado
       break;
     case 'C':
@@ -162,7 +187,7 @@ void letra (unsigned char k, int x, int y)
     case 'b':
       disminuirGradoLibertad(2);
       break;
-    case 'A':
+    case 'M':
       setAnimacion();
       break;
     case 'G':
@@ -195,6 +220,8 @@ void letra (unsigned char k, int x, int y)
       return;
     }
   setCamara (rotxCamara, rotyCamara, dCamara);
+  setPuntoDeMira (x_pos, y_pos);
+  setPosicion (x_camara, y_camara, z_camara);
   glutPostRedisplay ();		// Algunas de las opciones cambian paramentros
 }				// de la camara. Es necesario actualziar la imagen
 

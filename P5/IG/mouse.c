@@ -36,7 +36,7 @@
 
 
 bool MOVIENDO_CAMARA = false;
-int xant=0; yant=0;
+int xant=0, yant=0;
 
 /**	 void clickRaton( int boton, int estado, int x, int y )
 
@@ -84,6 +84,10 @@ void RatonMovido (int x, int y)
 		// Girar la cámara usando segun el vector ( x−xant, y−yant ) ;
 		xant =x ;
 		yant =y ;
+
+		setPuntoDeMira (x-xant, y-yant);
+
+		actualizaDireccion();
 	}
 
 	glutPostRedisplay ( );

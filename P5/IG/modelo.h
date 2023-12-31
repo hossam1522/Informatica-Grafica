@@ -91,6 +91,9 @@ void aumentarVelocidadGradoLibertad(int i);
 */
 void disminuirVelocidadGradoLibertad(int i);
 
+std::vector<float> normalizaVector(std::vector<float> v);
+
+
 class Nodo
 {
   protected:
@@ -206,9 +209,6 @@ class MallaVirtual:public Nodo
   std::vector<float> calculoNormalVertices();
 
   std::vector<float> calculoNormalCara(std::vector<float> v1, std::vector<float> v2, std::vector<float> v3);
-
-  std::vector<float> normalizaVector(std::vector<float> v);
-
   MallaVirtual & operator=(const MallaVirtual & otro);
 
   void setColor(float r, float g, float b, float a){color[0] = r;color[1] = g;color[2] = b;color[3] = a;}

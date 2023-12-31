@@ -1,14 +1,14 @@
 /*	Prácticas de Informática Gráfica
 
 	Grupo C					Curso 2022-23
- 	
+
 	Codigo base para la realización de las practicas de IG
-	
-	Estudiante: 
+
+	Estudiante: Hossam El Amraoui Leghzali
 
 	Programa principal
 =======================================================
-	G. Arroyo, J.C. Torres 
+	G. Arroyo, J.C. Torres
 	Dpto. Lenguajes y Sistemas Informticos
 	(Univ. de Granada)
 
@@ -20,7 +20,7 @@
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details 
+ GNU General Public License for more details
  http://www.gnu.org/copyleft/gpl.html
 
 =======================================================/
@@ -28,18 +28,19 @@ modulo visual.c
     Inicialización de ventana X
     Transformación de visualización
     Transformación de proyección
- 
+
 */
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <GL/glut.h>		// Libreria de utilidades de OpenGL
 #include "practicasIG.h"
+#include <vector>
 
 
 
 
-//================================================ VARIABLES  
+//================================================ VARIABLES
 
 /**
 
@@ -48,7 +49,9 @@ Angulos de rotacion de la camara.
 **/
 
 float view_rotx = 30, view_roty = 45;
-
+float camara_x = 0, camara_y = 5, camara_z = 5; // Posicion de la camara
+float pos_x = 0, pos_y = 0; // Lugar hacia donde mira la camara
+std::vector<float> direccion = {pos_x - camara_x, pos_y - camara_y, pos_z - camara_z};
 
 /**
 
@@ -84,6 +87,34 @@ void setCamara (float ax, float ay, float d)
   D = d;
 }
 
+void setPuntoDeMira (float x, float y)
+{
+  pos_x = x;
+  pos_y = y;
+}
+
+void setPosicion (float x, float y, float z)
+{
+  camara_x = x;
+  camara_y = y;
+  camara_z = z;
+}
+
+std::vector<float> getDireccion ()
+{
+  return direccion;
+}
+
+void setDireccion (std::vector<float> direcc)
+{
+  direccion = direcc;
+}
+
+void actualizaDireccion ()
+{
+  direccion = {pos_x - camara_x, pos_y - camara_y, pos_z - camara_z};
+}
+
 
 /** 	void transformacionVisualizacion()
 
@@ -96,12 +127,29 @@ view_roty;
 **/
 void transformacionVisualizacion ()
 {
-  glTranslatef (0, 0, -D);
 
-  glRotatef (view_rotx, 1.0, 0.0, 0.0);
-  glRotatef (view_roty, 0.0, 1.0, 0.0);
+  direccion = normalizaVector(direccion);
 
-  // glTranslatef(-x_camara,-y_camara,-z_camara);
+  gluLookAt (camara_x, camara_y, camara_z,
+             camara_x+direccion[0], camara_y+direccion[1], camara_z+direccion[2],
+             0.0, 1.0, 0.0);
+
+  //glTranslatef (0, 0, -D);
+
+  /* glRotatef (view_rotx, 1.0, 0.0, 0.0);
+  glRotatef (view_roty, 0.0, 1.0, 0.0); */
+
+  /* setPosicion(pos_x,
+               pos_y*cos(view_rotx)-pos_z*sin(view_rotx),
+               pos_y*sin(view_rotx)+pos_z*cos(view_rotx));
+
+  setPosicion(pos_x*cos(view_roty)+pos_z*sin(view_roty),
+               pos_y,
+               -pos_x*sin(view_roty)+pos_z*cos(view_roty)); */
+
+  //setDireccion({pos_x - camara_x, pos_y - camara_y, pos_z - camara_z});
+
+  //glTranslatef(-camara_x,-camara_y,-camara_z);
 }
 
 /**	void fijaProyeccion()
@@ -121,7 +169,7 @@ void fijaProyeccion ()
   glFrustum (-1, 1, -calto, calto, 1.5, 1500);
 
   glMatrixMode (GL_MODELVIEW);
-// A partir de este momento las transformaciones son de modelado.       
+// A partir de este momento las transformaciones son de modelado.
   glLoadIdentity ();
 
 }
