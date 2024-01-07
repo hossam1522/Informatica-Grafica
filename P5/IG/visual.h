@@ -4,7 +4,7 @@
 
 	Codigo base para la realización de las practicas de IG
 
-	Estudiante: Hossam El Amraoui Leghzali
+	Estudiante:
 
 =======================================================
 	G. Arroyo, J.C. Torres
@@ -27,27 +27,30 @@
 	visual.h
 */
 
-
-
 //======================== visual.c
 
+#include <vector>
 
 /** 	void setCamara()
 
 Cambia los parámetros de la cámara en el modulo visual
 
 **/
-void setCamara (float ax, float ay, float d);
+void setCamara (float ax, float ay, float d, float x);
 
-void setPuntoDeMira (float x, float y);
+void actualizarRotacion (float x, float y);
+
+float getAnguloX();
+
+float getAnguloY();
 
 void setPosicion (float x, float y, float z);
 
-std::vector<float> getDireccion ();
+std::vector<float> getPosicion();
 
-void setDireccion (std::vector<float> direcc);
+std::vector<float> getVPN();
 
-void actualizaDireccion ();
+int pick (int x, int y);
 
 /** 	void transformacionVisualizacion()
 

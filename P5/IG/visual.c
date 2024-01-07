@@ -4,7 +4,7 @@
 
 	Codigo base para la realización de las practicas de IG
 
-	Estudiante: Hossam El Amraoui Leghzali
+	Estudiante:
 
 	Programa principal
 =======================================================
@@ -34,10 +34,8 @@ modulo visual.c
 #include <stdlib.h>
 #include <math.h>
 #include <GL/glut.h>		// Libreria de utilidades de OpenGL
-#include "practicasIG.h"
 #include <vector>
-
-
+#include "practicasIG.h"
 
 
 //================================================ VARIABLES
@@ -48,19 +46,17 @@ Angulos de rotacion de la camara.
 
 **/
 
-float view_rotx = 30, view_roty = 45;
-float camara_x = 0, camara_y = 5, camara_z = 5; // Posicion de la camara
-float pos_x = 0, pos_y = 0; // Lugar hacia donde mira la camara
-std::vector<float> direccion = {pos_x - camara_x, pos_y - camara_y, pos_z - camara_z};
+float view_rotx = 0, view_roty = 0;
+
 
 /**
 
 Distancia de la cámara
 
 **/
-
+std::vector<float> posicion = {0,0,10};
+std::vector<float> vpn;
 float D = 10;
-
 
 /**
 
@@ -79,40 +75,57 @@ float anchoVentana, altoVentana;
 Cambia los parámetros de la cámara en el modulo visual
 
 **/
-void setCamara (float ax, float ay, float d)
+void setCamara (float ax, float ay, float d, float x)
 {
   view_rotx = ax;
   view_roty = ay;
-
+  posicion[0] = x;
+  posicion[2] = d;
   D = d;
 }
 
-void setPuntoDeMira (float x, float y)
-{
-  pos_x = x;
-  pos_y = y;
+float getAnguloX(){
+  return view_rotx;
 }
 
-void setPosicion (float x, float y, float z)
-{
-  camara_x = x;
-  camara_y = y;
-  camara_z = z;
+float getAnguloY(){
+  return view_roty;
 }
 
-std::vector<float> getDireccion ()
-{
-  return direccion;
+void setPosicion(float x, float y, float z){
+  posicion[0] = x;
+  posicion[1] = y;
+  posicion[2] = z;
 }
 
-void setDireccion (std::vector<float> direcc)
-{
-  direccion = direcc;
+std::vector<float> getPosicion(){
+  return posicion;
 }
 
-void actualizaDireccion ()
+std::vector<float> getVPN(){
+  return vpn;
+}
+
+void calculaVPN (){
+  vpn = {sin(view_rotx)*sin(view_roty), -cos(view_rotx), -sin(view_rotx)*cos(view_roty)};
+
+  vpn = normalizaVector(vpn);
+
+}
+
+void resetVisualizacion()
 {
-  direccion = {pos_x - camara_x, pos_y - camara_y, pos_z - camara_z};
+  view_rotx = 30;
+  view_roty = 45;
+  posicion[0] = 0;
+  posicion[2] = 10;
+  D = 10;
+}
+
+void actualizarRotacion (float x, float y)
+{
+  view_rotx += x;
+  view_roty += y;
 }
 
 
@@ -127,29 +140,39 @@ view_roty;
 **/
 void transformacionVisualizacion ()
 {
+  calculaVPN();
 
-  direccion = normalizaVector(direccion);
+  gluLookAt(posicion[0], posicion[1], posicion[2],
+            posicion[0]+vpn[0], posicion[1]+vpn[1], posicion[2]+vpn[2],
+            0, 1, 0);
 
-  gluLookAt (camara_x, camara_y, camara_z,
-             camara_x+direccion[0], camara_y+direccion[1], camara_z+direccion[2],
-             0.0, 1.0, 0.0);
+}
 
-  //glTranslatef (0, 0, -D);
+int pick (int x, int y)
+{
 
-  /* glRotatef (view_rotx, 1.0, 0.0, 0.0);
-  glRotatef (view_roty, 0.0, 1.0, 0.0); */
+GLint viewport[4];
+unsigned char data[4];
 
-  /* setPosicion(pos_x,
-               pos_y*cos(view_rotx)-pos_z*sin(view_rotx),
-               pos_y*sin(view_rotx)+pos_z*cos(view_rotx));
+  glGetIntegerv ( GL_VIEWPORT , viewport);
+  glDisable ( GL_DITHER );
+  //glDisable ( GL_LIGHTING );
+  setIluminacion(false);
+  setTexture(false);
+  dibujoEscena ();
+  glReadPixels ( x, viewport[3]-y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  //glEnable ( GL_LIGHTING );
+  setTexture(true);
+  setIluminacion(true);
+  glEnable ( GL_DITHER );
+  glFlush ( );
+  glFinish ();
 
-  setPosicion(pos_x*cos(view_roty)+pos_z*sin(view_roty),
-               pos_y,
-               -pos_x*sin(view_roty)+pos_z*cos(view_roty)); */
 
-  //setDireccion({pos_x - camara_x, pos_y - camara_y, pos_z - camara_z});
+  int resultado = data[0];
 
-  //glTranslatef(-camara_x,-camara_y,-camara_z);
+  glutPostRedisplay ();
+  return resultado;
 }
 
 /**	void fijaProyeccion()
@@ -157,6 +180,7 @@ void transformacionVisualizacion ()
 Fija la transformacion de proyeccion en funcion del tamaño de la ventana y del tipo de proyeccion
 
 **/
+
 void fijaProyeccion ()
 {
   float calto;			// altura de la ventana corregida

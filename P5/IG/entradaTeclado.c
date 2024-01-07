@@ -4,7 +4,7 @@
 
 	Codigo base para la realización de las practicas de IG
 
-	Estudiante:
+	Estudiante: Hossam El Amraoui Leghzali
 
 =======================================================
 	G. Arroyo, J.C. Torres
@@ -32,6 +32,8 @@ modulo entradaTeclado.c
 #include <math.h>
 #include <GL/glut.h>		// Libreria de utilidades de OpenGL
 #include "practicasIG.h"
+//#include <vector>
+#include <iostream>
 
 
 /**
@@ -56,7 +58,7 @@ void printHelp ()
   printf ("l, L: muestra únicamente las aristas de la figura \n\n");
   printf ("f, F: rellena la figura con color \n\n");
   printf ("i, I: cambia el modo de iluminación \n\n");
-  printf ("s, S: cambia el tipo de sombreado (flat, smooth) \n\n");
+  printf ("o, O: cambia el tipo de sombreado (flat, smooth) \n\n");
   printf ("C: aumenta el primer grado de libertad \n\n");
   printf ("c: disminuye el primer grado de libertad \n\n");
   printf ("V: aumenta el segundo grado de libertad \n\n");
@@ -107,11 +109,14 @@ y:
 
 float rotxCamara = 30, rotyCamara = 45;
 float dCamara = 10;
-float x_camara = 0, y_camara = 5, z_camara = 5;
-float x_pos = 0, y_pos = 0, z_pos = 0;
+float x_camara = 0, y_camara = 0, z_camara = 10;
+//std::cout << "debug" << std::endl;
 
 void letra (unsigned char k, int x, int y)
 {
+  x_camara = getPosicion()[0];
+  y_camara = getPosicion()[1];
+  z_camara = getPosicion()[2];
 
   switch (k)
     {
@@ -120,34 +125,36 @@ void letra (unsigned char k, int x, int y)
       printHelp ();		// H y h imprimen ayuda
       break;
     case '+':			// acerca la cámara
-      dCamara -= 5.0;
+      x_camara += getVPN()[0];
+      y_camara += getVPN()[1];
+      z_camara += getVPN()[2];
       break;
     case '-':			// aleja la cámara
-      dCamara += 5.0;
+      x_camara -= getVPN()[0];
+      y_camara -= getVPN()[1];
+      z_camara -= getVPN()[2];
       break;
     case 'w':
     case 'W':
-      x_camara += getDireccion()[0];
-      y_camara += getDireccion()[1];
-      z_camara += getDireccion()[2];
+      x_camara += getVPN()[0];
+      y_camara += getVPN()[1];
+      z_camara += getVPN()[2];
       break;
     case 'a':
     case 'A':
-      x_camara += getDireccion()[2];
-      y_camara -= 0;
-      z_camara -= getDireccion()[0];
+      x_camara += getVPN()[2];
+      z_camara -= getVPN()[0];
       break;
     case 's':
     case 'S':
-      x_camara -= getDireccion()[0];
-      y_camara -= getDireccion()[1];
-      z_camara -= getDireccion()[2];
+      x_camara -= getVPN()[0];
+      y_camara -= getVPN()[1];
+      z_camara -= getVPN()[2];
       break;
     case 'd':
     case 'D':
-      x_camara -= getDireccion()[2];
-      y_camara += 0;
-      z_camara += getDireccion()[0];
+      x_camara -= getVPN()[2];
+      z_camara += getVPN()[0];
       break;
     case 'p':
     case 'P':
@@ -163,11 +170,15 @@ void letra (unsigned char k, int x, int y)
       break;
     case 'i':
     case 'I':
-      setIluminacion ();	// I y i cambian a modo iluminacion
+      setIluminacion (!getIluminacion());	// I y i cambian a modo iluminacion
       break;
     case 'o':
     case 'O':
       setSombreado ();		// S y s cambian a modo sombreado
+      break;
+    case 't':
+    case 'T':
+      setTexture (!getTexture());		// T y t cambian a modo textura
       break;
     case 'C':
       aumentarGradoLibertad(0);
@@ -219,9 +230,8 @@ void letra (unsigned char k, int x, int y)
     default:
       return;
     }
-  setCamara (rotxCamara, rotyCamara, dCamara);
-  setPuntoDeMira (x_pos, y_pos);
   setPosicion (x_camara, y_camara, z_camara);
+  setCamara (getAnguloX(), getAnguloY(), getPosicion()[2], getPosicion()[0]);
   glutPostRedisplay ();		// Algunas de las opciones cambian paramentros
 }				// de la camara. Es necesario actualziar la imagen
 
@@ -244,24 +254,24 @@ void especial (int k, int x, int y)
   switch (k)
     {
     case GLUT_KEY_UP:
-      rotxCamara += 5.0;	// Cursor arriba + rotacion x
+      rotxCamara = getAnguloX() + 5.0;	// Cursor arriba + rotacion x
       if (rotxCamara > 360)
-	rotxCamara -= 360;
+	rotxCamara = getAnguloX() - 360;
       break;
     case GLUT_KEY_DOWN:
-      rotxCamara -= 5.0;
-      if (rotxCamara < 0)
-	rotxCamara += 360;
+      rotxCamara = getAnguloX() - 5.0;	// Cursor arriba + rotacion x
+      if (rotxCamara > 360)
+	rotxCamara = getAnguloX() + 360;
       break;
     case GLUT_KEY_LEFT:
-      rotyCamara += 5.0;
+      rotyCamara = getAnguloY() + 5.0;
       if (rotyCamara > 360)
-	rotyCamara -= 360;
+	rotyCamara = getAnguloY() - 360;
       break;
     case GLUT_KEY_RIGHT:
-      rotyCamara -= 5.0;
-      if (rotyCamara < 0)
-	rotyCamara += 360;
+      rotyCamara = getAnguloY() - 5.0;
+      if (rotyCamara > 360)
+	rotyCamara = getAnguloY() + 360;
       break;
     case GLUT_KEY_PAGE_DOWN:	// acerca la cámara
       dCamara -= 5.0;
@@ -272,6 +282,6 @@ void especial (int k, int x, int y)
     default:
       return;
     }
-  setCamara (rotxCamara, rotyCamara, dCamara);
+  setCamara (rotxCamara, rotyCamara, getPosicion()[2], getPosicion()[0]);
   glutPostRedisplay ();		// Actualiza la imagen (ver proc. letra)
 }

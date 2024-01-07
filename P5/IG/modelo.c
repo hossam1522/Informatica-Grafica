@@ -44,6 +44,7 @@ bool iluminacion = true;   // Visualizacion inicial con iluminacion
 bool luces[2] = {true, true};   // Luces inicialmente encendidas
 bool sombreado = true;   // Visualizacion inicial con sombreado plano (false) y suave (true)
 bool animacion = false;   // Animación inicial desactivada
+bool texture = true;   // Textura inicialmente desactivada
 int  a_dibujar = 0;     // Objeto a dibujar (0: practica original, 1: superficie, 2: malla)
 float gl0 = 5;   // Grado de libertad 1
 bool max0 = false;   // Grado de libertad 1 en su valor máximo
@@ -57,6 +58,7 @@ SuperficieRevolucion cilindro("plys/cilindro.ply", 20);
 SuperficieRevolucion objeto1("plys/perfil.ply", 20, true);
 SuperficieRevolucion objeto2 = objeto1;
 SuperficieRevolucion objeto3 = objeto1;
+vector<Nodo*> nodos;
 
 /**************************************************************************************/
 /**************************************************************************************/
@@ -74,26 +76,36 @@ initModel (int opcion, char * nombre_archivo)
     cilindro.asignarTextura("jpgs/s_textura_test.jpg");
     cilindro.calcularCoordenadasTextura();
     cilindro.setColor(1, 1, 1, 1);
+    cilindro.ColorSeleccion(0, 0);
 
     objeto1.setAmbiente(0, 0, 1, 1);
     objeto1.setDifusa(1, 1, 1, 1);
     objeto1.setEspecular(1, 1, 1, 1);
     objeto1.setShininess(128);
     objeto1.setColor(0, 0, 1, 1);
+    objeto1.ColorSeleccion(1, 0);
 
     objeto2.setAmbiente(0, 0, 0, 1);
     objeto2.setDifusa(0, 1, 0, 1);
     objeto2.setColor(0, 1, 0, 1);
+    objeto2.ColorSeleccion(2, 0);
 
     objeto3.setEmision(1, 0, 0, 1);
     objeto3.setAmbiente(0, 0, 0, 1);
     objeto3.setDifusa(0, 0, 0, 1);
     objeto3.setColor(1, 0, 0, 1);
+    objeto3.ColorSeleccion(3, 0);
+
+    nodos = {&cilindro, &objeto1, &objeto2, &objeto3};
   }
   else if (opcion == 1){
     superficie = SuperficieRevolucion(nombre_archivo, 20);
+    superficie.ColorSeleccion(0, 0);
+    nodos = {&superficie};
   } else if (opcion == 2){
     malla = PLY(nombre_archivo);
+    malla.ColorSeleccion(0, 0);
+    nodos = {&malla};
   }
 
   a_dibujar = opcion;
@@ -692,13 +704,27 @@ void Nodo::asignarTextura(const char * nombre_archivo){
 
 /**************************************************************************************/
 
+void Nodo::ColorSeleccion ( int i , int componente )
+{
+  unsigned char r = ( i & 0xFF ) ;
+  unsigned char g = ( componente & 0xFF ) ;
+  glColor3ub (r, g, 0) ;
+}
+
+/**************************************************************************************/
+
 /**	void Dibuja( void )
 
 Procedimiento de dibujo del modelo. Es llamado por glut cada vez que se debe redibujar.
 
 **/
 
-void Dibuja (void)
+void Dibuja (void){
+  dibujoEscena();
+  glutSwapBuffers();
+}
+
+void dibujoEscena (void)
 {
   static GLfloat  pos1[4] = { 0, 0.0, 5.0, 0.0 };	// Posicion de la fuente de luz
   static GLfloat  pos2[4] = { -13.0, 0.0, -10.0, 0.0 };	// Posicion de la fuente de luz
@@ -769,7 +795,7 @@ void Dibuja (void)
   glPopMatrix ();		// Desapila la transformacion geometrica
 
 
-  glutSwapBuffers ();		// Intercambia el buffer de dibujo y visualizacion
+  //glutSwapBuffers ();		// Intercambia el buffer de dibujo y visualizacion
 }
 
 
@@ -802,9 +828,14 @@ void setModo (int M)
   glPolygonMode (GL_FRONT_AND_BACK, modo);
 }
 
-void setIluminacion ()
+void setIluminacion (bool i)
 {
-  iluminacion = !iluminacion;
+  iluminacion = i;
+}
+
+bool getIluminacion ()
+{
+  return iluminacion;
 }
 
 void setLuz(int i){
@@ -819,6 +850,21 @@ void setSombreado ()
 void setAnimacion ()
 {
   animacion = !animacion;
+}
+
+void setTexture(bool t){
+  texture = t;
+
+  if (!texture){
+    cilindro.setTextura(false);
+  }
+  else {
+    cilindro.setTextura(true);
+  }
+}
+
+bool getTexture(){
+  return texture;
 }
 
 void aumentarGradoLibertad(int i){
@@ -861,3 +907,8 @@ vector<float> normalizaVector(vector<float> v){
   return v;
 
 }
+
+vector<Nodo*> getNodos(){
+  return nodos;
+}
+

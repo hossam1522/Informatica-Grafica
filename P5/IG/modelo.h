@@ -36,6 +36,8 @@ enum TipoTransformacion {ROTACION, TRASLACION};
 **/
 void Dibuja (void);
 
+void dibujoEscena (void);
+
 /**
 	Funcion de fondo
 **/
@@ -54,7 +56,9 @@ void setModo (int M);
 /**
 	Funcion de cambio de iluminacion
 **/
-void setIluminacion ();
+void setIluminacion (bool i);
+
+bool getIluminacion();
 
 /**
   Funcion de encendido y apagado de la luz número i
@@ -70,6 +74,10 @@ void setSombreado ();
  * Funcion de cambio de animacion
 */
 void setAnimacion();
+
+void setTexture(bool t);
+
+bool getTexture();
 
 /**
  * Aumenta el grado de libertad número i
@@ -94,6 +102,8 @@ void disminuirVelocidadGradoLibertad(int i);
 std::vector<float> normalizaVector(std::vector<float> v);
 
 
+
+
 class Nodo
 {
   protected:
@@ -102,6 +112,7 @@ class Nodo
     unsigned char * texImagen;
     unsigned int texAncho, texAlto;
     bool textura = false;
+    bool seleccionado = false;
 
   public:
 
@@ -113,7 +124,14 @@ class Nodo
 
   void asignarTextura (const char * nombre_archivo);
 
+  void setTextura(bool textura){this->textura = textura;}
+
+  bool setSeleccionado(bool seleccionado){this->seleccionado = seleccionado;}
+
+  void ColorSeleccion ( int i , int componente );
+
 };
+std::vector<Nodo*> getNodos();
 
 class Ejes:public Nodo
 {
