@@ -54,6 +54,11 @@ void printHelp ()
   printf ("+,-: avanza y retrocede la cámara \n\n");
   printf ("Teclas de movimiento de cursor: giran la camara\n\n");
   // Anyade la informacion de las opciones que introduzcas aqui !!
+  printf ("w, W: avanza la cámara \n\n");
+  printf ("a, A: mueve la cámara hacia la izquierda sin cambiar la dirección de mira \n\n");
+  printf ("s, S: retrocede la cámara \n\n");
+  printf ("d, D: mueve la cámara hacia la derecha sin cambiar la dirección de mira \n\n");
+  printf ("r, R: resetea la visualización \n\n");
   printf ("p, P: muestra únicamente los vértices de la figura \n\n");
   printf ("l, L: muestra únicamente las aristas de la figura \n\n");
   printf ("f, F: rellena la figura con color \n\n");
@@ -109,8 +114,7 @@ y:
 
 float rotxCamara = 30, rotyCamara = 45;
 float dCamara = 10;
-float x_camara = 0, y_camara = 0, z_camara = 10;
-//std::cout << "debug" << std::endl;
+float x_camara = 5, y_camara = 10, z_camara = 15;
 
 void letra (unsigned char k, int x, int y)
 {
@@ -155,6 +159,10 @@ void letra (unsigned char k, int x, int y)
     case 'D':
       x_camara -= getVPN()[2];
       z_camara += getVPN()[0];
+      break;
+    case 'r':
+    case 'R':
+      resetVisualizacion();
       break;
     case 'p':
     case 'P':
@@ -231,7 +239,6 @@ void letra (unsigned char k, int x, int y)
       return;
     }
   setPosicion (x_camara, y_camara, z_camara);
-  setCamara (getAnguloX(), getAnguloY(), getPosicion()[2], getPosicion()[0]);
   glutPostRedisplay ();		// Algunas de las opciones cambian paramentros
 }				// de la camara. Es necesario actualziar la imagen
 
@@ -254,12 +261,12 @@ void especial (int k, int x, int y)
   switch (k)
     {
     case GLUT_KEY_UP:
-      rotxCamara = getAnguloX() + 5.0;	// Cursor arriba + rotacion x
+      rotxCamara = getAnguloX() + 5.0;
       if (rotxCamara > 360)
 	rotxCamara = getAnguloX() - 360;
       break;
     case GLUT_KEY_DOWN:
-      rotxCamara = getAnguloX() - 5.0;	// Cursor arriba + rotacion x
+      rotxCamara = getAnguloX() - 5.0;
       if (rotxCamara > 360)
 	rotxCamara = getAnguloX() + 360;
       break;
@@ -274,14 +281,18 @@ void especial (int k, int x, int y)
 	rotyCamara = getAnguloY() + 360;
       break;
     case GLUT_KEY_PAGE_DOWN:	// acerca la cámara
-      dCamara -= 5.0;
+      x_camara += getVPN()[0];
+      y_camara += getVPN()[1];
+      z_camara += getVPN()[2];
       break;
     case GLUT_KEY_PAGE_UP:	// aleja la cámara
-      dCamara += 5.0;
+      x_camara -= getVPN()[0];
+      y_camara -= getVPN()[1];
+      z_camara -= getVPN()[2];
       break;
     default:
       return;
     }
-  setCamara (rotxCamara, rotyCamara, getPosicion()[2], getPosicion()[0]);
+  setAnguloX (rotxCamara); setAnguloY (rotyCamara); setPosicion (x_camara, y_camara, z_camara);
   glutPostRedisplay ();		// Actualiza la imagen (ver proc. letra)
 }

@@ -113,6 +113,8 @@ class Nodo
     unsigned int texAncho, texAlto;
     bool textura = false;
     bool seleccionado = false;
+    bool cambio_color = false;
+    float color_seleccionado[3];
 
   public:
 
@@ -126,7 +128,7 @@ class Nodo
 
   void setTextura(bool textura){this->textura = textura;}
 
-  bool setSeleccionado(bool seleccionado){this->seleccionado = seleccionado;}
+  void setSeleccionado(bool seleccionado){this->seleccionado = seleccionado;}
 
   void ColorSeleccion ( int i , int componente );
 
@@ -204,7 +206,7 @@ class MallaVirtual:public Nodo
     std::vector <int> triangulos;
     std::vector <float> normales_vertices;
     std::vector <float> coordenadas_textura;
-    float color [4] = {0.5, 0.5, 0.5, 1.0}; // Por defecto gris
+    float color [4] = {0.4, 0.4, 0.4, 1.0}; // Por defecto gris
     float ambiente[4] = {0.2, 0.2, 0.2, 1.0};
     float difusa[4] = {0.8, 0.8, 0.8, 1.0};
     float especular[4] = {0.0, 0.0, 0.0, 1.0};

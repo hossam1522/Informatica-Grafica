@@ -34,6 +34,7 @@
 #include <GL/glut.h>		// Libreria de utilidades de OpenGL
 #include "visual.h"
 #include "practicasIG.h"
+#include <iostream>
 
 /**	 void clickRaton( int boton, int estado, int x, int y )
 
@@ -49,30 +50,23 @@ x,y: Posicion, en coordenadas de pantalla, en que se encuantra el cursor.
 
 **/
 
-bool MOVIENDO_CAMARA = false, SELECCION = false;
+bool MOVIENDO_CAMARA = false;
 float xant = 0, yant = 0;
-//bool ilum = getIluminacion(), text = getTexture();
 
 void clickRaton (int boton, int estado, int x, int y)
 {
-	if (boton == GLUT_MIDDLE_BUTTON)
-	{
-		if (estado == GLUT_DOWN)
-		{
-			MOVIENDO_CAMARA = true;
-		}
-		else
-		{
-			MOVIENDO_CAMARA = false;
-		}
-	}
-	if (boton == GLUT_LEFT_BUTTON ){
-		if ( estado == GLUT_DOWN ) {
-			SELECCION=true;
-		}
-		else {
-			SELECCION=false;
-		}
+	if (boton == GLUT_MIDDLE_BUTTON && estado == GLUT_DOWN)
+		MOVIENDO_CAMARA = true;
+	else
+		MOVIENDO_CAMARA = false;
+
+	if (boton == GLUT_LEFT_BUTTON && estado == GLUT_DOWN){
+		int figura = pick (x, y);
+		for (int i = 0; i < getNodos().size(); i++)
+			if (figura-1 == i)
+				getNodos()[i]->setSeleccionado(true);
+			else
+				getNodos()[i]->setSeleccionado(false);
 	}
 
 }
@@ -95,19 +89,6 @@ void RatonMovido (int x, int y)
 		actualizarRotacion((y-yant)/100, (x-xant)/100);
 		xant = x;
 		yant = y;
-	}
-	if (SELECCION) {
-		xant = x;
-		yant = y;
-		int figura = pick (x, y);
-		for (int i = 0; i < getNodos().size(); i++) {
-			if (figura == i) {
-				getNodos()[i]->setSeleccionado(true);
-			}
-			else {
-				getNodos()[i]->setSeleccionado(false);
-			}
-		}
 	}
 
 	glutPostRedisplay();

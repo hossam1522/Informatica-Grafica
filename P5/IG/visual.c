@@ -54,8 +54,8 @@ float view_rotx = 0, view_roty = 0;
 Distancia de la cámara
 
 **/
-std::vector<float> posicion = {0,0,10};
-std::vector<float> vpn;
+std::vector<float> posicion = {5,10,15}; // Posición de la cámara
+std::vector<float> vpn; // Dirección hacia la que mira la cámara
 float D = 10;
 
 /**
@@ -67,29 +67,20 @@ Tamaño de la ventana X
 
 float anchoVentana, altoVentana;
 
-
-
-
-/** 	void setCamara()
-
-Cambia los parámetros de la cámara en el modulo visual
-
-**/
-void setCamara (float ax, float ay, float d, float x)
-{
-  view_rotx = ax;
-  view_roty = ay;
-  posicion[0] = x;
-  posicion[2] = d;
-  D = d;
-}
-
 float getAnguloX(){
   return view_rotx;
 }
 
+void setAnguloX(float x){
+  view_rotx = x;
+}
+
 float getAnguloY(){
   return view_roty;
+}
+
+void setAnguloY(float y){
+  view_roty = y;
 }
 
 void setPosicion(float x, float y, float z){
@@ -115,10 +106,11 @@ void calculaVPN (){
 
 void resetVisualizacion()
 {
-  view_rotx = 30;
-  view_roty = 45;
-  posicion[0] = 0;
-  posicion[2] = 10;
+  view_rotx = 0;
+  view_roty = 0;
+  posicion[0] = 5;
+  posicion[1] = 10;
+  posicion[2] = 15;
   D = 10;
 }
 
@@ -145,29 +137,27 @@ void transformacionVisualizacion ()
   gluLookAt(posicion[0], posicion[1], posicion[2],
             posicion[0]+vpn[0], posicion[1]+vpn[1], posicion[2]+vpn[2],
             0, 1, 0);
-
 }
 
 int pick (int x, int y)
 {
 
-GLint viewport[4];
-unsigned char data[4];
+  GLint viewport[4];
+  unsigned char data[4];
 
   glGetIntegerv ( GL_VIEWPORT , viewport);
   glDisable ( GL_DITHER );
-  //glDisable ( GL_LIGHTING );
   setIluminacion(false);
   setTexture(false);
+
   dibujoEscena ();
   glReadPixels ( x, viewport[3]-y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
-  //glEnable ( GL_LIGHTING );
+
   setTexture(true);
   setIluminacion(true);
   glEnable ( GL_DITHER );
   glFlush ( );
   glFinish ();
-
 
   int resultado = data[0];
 

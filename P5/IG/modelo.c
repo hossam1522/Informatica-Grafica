@@ -59,6 +59,7 @@ SuperficieRevolucion objeto1("plys/perfil.ply", 20, true);
 SuperficieRevolucion objeto2 = objeto1;
 SuperficieRevolucion objeto3 = objeto1;
 vector<Nodo*> nodos;
+float color_seleccion[4] = {1, 1, 1, 1};
 
 /**************************************************************************************/
 /**************************************************************************************/
@@ -75,36 +76,34 @@ initModel (int opcion, char * nombre_archivo)
   if (opcion == 0){
     cilindro.asignarTextura("jpgs/s_textura_test.jpg");
     cilindro.calcularCoordenadasTextura();
-    cilindro.setColor(1, 1, 1, 1);
-    cilindro.ColorSeleccion(0, 0);
+    cilindro.setColor(0.5, 0.5, 0.5, 1);
+    cilindro.ColorSeleccion(1, 0);
 
     objeto1.setAmbiente(0, 0, 1, 1);
     objeto1.setDifusa(1, 1, 1, 1);
     objeto1.setEspecular(1, 1, 1, 1);
     objeto1.setShininess(128);
     objeto1.setColor(0, 0, 1, 1);
-    objeto1.ColorSeleccion(1, 0);
+    objeto1.ColorSeleccion(2, 0);
 
     objeto2.setAmbiente(0, 0, 0, 1);
     objeto2.setDifusa(0, 1, 0, 1);
     objeto2.setColor(0, 1, 0, 1);
-    objeto2.ColorSeleccion(2, 0);
+    objeto2.ColorSeleccion(3, 0);
 
     objeto3.setEmision(1, 0, 0, 1);
     objeto3.setAmbiente(0, 0, 0, 1);
     objeto3.setDifusa(0, 0, 0, 1);
     objeto3.setColor(1, 0, 0, 1);
-    objeto3.ColorSeleccion(3, 0);
+    objeto3.ColorSeleccion(4, 0);
 
     nodos = {&cilindro, &objeto1, &objeto2, &objeto3};
   }
   else if (opcion == 1){
     superficie = SuperficieRevolucion(nombre_archivo, 20);
-    superficie.ColorSeleccion(0, 0);
     nodos = {&superficie};
   } else if (opcion == 2){
     malla = PLY(nombre_archivo);
-    malla.ColorSeleccion(0, 0);
     nodos = {&malla};
   }
 
@@ -335,13 +334,22 @@ PLY::PLY(const char * nombre_archivo)
 }
 
 void MallaVirtual::draw(){
-  glColor3f(color[0], color[1], color[2]);
+  if (cambio_color)
+      glColor3ub(color_seleccionado[0], color_seleccionado[1], color_seleccionado[2]);
 
-  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, difusa);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especular);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambiente);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emision);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+  if (!seleccionado){
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, difusa);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especular);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambiente);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emision);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+  }
+  else{
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color_seleccion);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color_seleccion);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color_seleccion);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, color_seleccion);
+  }
 
   if (!cambio_material)
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
@@ -650,13 +658,22 @@ void SuperficieRevolucion::draw(){
   triangulos = tmp;
   normales_vertices = calculoNormalVertices();
 
-  glColor3f(color[0], color[1], color[2]);
+  if (cambio_color)
+    glColor3ub(color_seleccionado[0], color_seleccionado[1], color_seleccionado[2]);
 
-  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, difusa);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especular);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambiente);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emision);
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+  if (!seleccionado){
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, difusa);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, especular);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambiente);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emision);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+  }
+  else{
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color_seleccion);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color_seleccion);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color_seleccion);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, color_seleccion);
+  }
 
   if (!cambio_material)
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
@@ -706,9 +723,12 @@ void Nodo::asignarTextura(const char * nombre_archivo){
 
 void Nodo::ColorSeleccion ( int i , int componente )
 {
+  cambio_color = true;
   unsigned char r = ( i & 0xFF ) ;
   unsigned char g = ( componente & 0xFF ) ;
-  glColor3ub (r, g, 0) ;
+  color_seleccionado[0] = r;
+  color_seleccionado[1] = g;
+  color_seleccionado[2] = 0;
 }
 
 /**************************************************************************************/
@@ -739,15 +759,6 @@ void dibujoEscena (void)
   transformacionVisualizacion ();	// Carga transformacion de visualizacion
 
   glLightfv (GL_LIGHT0, GL_POSITION, pos1);	// Declaracion de luz. Colocada aqui esta fija en la escena
-  /* glLightfv (GL_LIGHT1, GL_POSITION, pos2);
-  float luz_ambiente1[4] = {1,0,1,1};
-  float luz_difusa1[4] = {0.5, 0, 0.5, 1};
-  float luz_ambiente2[4] = {1,1,0,1};
-  float luz_difusa2[4] = {0.5, 0.5, 0, 1};
-  glLightfv(GL_LIGHT0,GL_AMBIENT, luz_ambiente1);
-  glLightfv(GL_LIGHT0,GL_DIFFUSE, luz_difusa1);
-  glLightfv(GL_LIGHT1,GL_AMBIENT, luz_ambiente2);
-  glLightfv(GL_LIGHT1,GL_DIFFUSE, luz_difusa2); */
 
   ejesCoordenadas.draw();			// Dibuja los ejes
 
@@ -760,16 +771,6 @@ void dibujoEscena (void)
   else
     glEnable(GL_LIGHTING);
 
-  /* if (luces[0] && iluminacion)
-    glEnable(GL_LIGHT0);
-  else if (iluminacion)
-    glDisable(GL_LIGHT0); */
-
-  /* if (luces[1] && iluminacion)
-    glEnable(GL_LIGHT1);
-  else if (iluminacion)
-    glDisable(GL_LIGHT1);
- */
   if (!sombreado)
     glShadeModel(GL_FLAT);
   else
@@ -787,10 +788,14 @@ void dibujoEscena (void)
     glTranslatef(3,0,0);
     objeto3.draw();
   }
-  else if (a_dibujar == 1)
+  else if (a_dibujar == 1){
+    superficie.ColorSeleccion(1, 0);
     superficie.draw();
-  else if (a_dibujar == 2)
+  }
+  else if (a_dibujar == 2){
+    malla.ColorSeleccion(1, 0);
     malla.draw();
+  }
 
   glPopMatrix ();		// Desapila la transformacion geometrica
 
